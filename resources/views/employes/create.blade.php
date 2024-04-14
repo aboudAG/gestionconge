@@ -11,31 +11,31 @@
 <body>
     <div class="container">
         <h1>Inscription d'un nouvel employé</h1>
-        <form method="POST" action="{{ route('employes.store') }}">
+        <form  action="{{ route('employes.store') }}" method="POST">
             @csrf {{-- Protection contre les attaques CSRF --}}
 
             {{-- Champs du formulaire pour l'inscription d'un nouvel employé --}}
             <div class="mb-3">
-                <label for="matricule" class="form-label">Matricule</label>
-                <input type="text" class="form-control" id="matricule" name="matricule" value="{{ old('matricule') }}" required>
+                <label for="MATRICULE" class="form-label">Matricule</label>
+                <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{ old('MATRICULE') }}" required>
             </div>
 
             <div class="mb-3">
-                <label for="nom" class="form-label">Nom</label>
-                <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}" required>
+                <label for="NOM" class="form-label">Nom</label>
+                <input type="text" class="form-control" id="NOM" name="NOM" value="{{ old('NOM') }}" required>
             </div>
 
             <div class="mb-3">
-                <label for="prenom" class="form-label">Prénom</label>
-                <input type="text" class="form-control" id="prenom" name="prenom" value="{{ old('prenom') }}" required>
+                <label for="PRENOM" class="form-label">Prénom</label>
+                <input type="text" class="form-control" id="PRENOM" name="PRENOM" value="{{ old('PRENOM') }}" required>
             </div>
 
             <div class="mb-3">
-                <label for="role_id" class="form-label">Role</label>
-                <select class="form-select" id="role_id" name="role_id" required>
+                <label for="ROLE_ID" class="form-label">Role</label>
+                <select class="form-select" id="ROLE_ID" name="ROLE_ID" required>
                     <option value="">Choisir...</option>
                     @foreach($roles as $role)
-                        <option value="{{ $role->NOM }}" {{ old('role_id') == $role->NOM ? 'selected' : '' }}>
+                        <option value="{{ $role->NOM }}" {{ old('ROLE_ID') == $role->NOM ? 'selected' : '' }}>
                             {{ $role->NOM  }}
                         </option>
                     @endforeach
@@ -43,36 +43,22 @@
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                <label for="DATE_EMBAUCHE" class="form-label">Date d'embauche</label>
+                <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" value="{{ old('DATE_EMBAUCHE') }}" required>
             </div>
 
             <div class="mb-3">
-                <label for="date_embauche" class="form-label">Date d'embauche</label>
-                <input type="date" class="form-control" id="date_embauche" name="date_embauche" value="{{ old('date_embauche') }}" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="structure_id" class="form-label">Structure</label>
-                <select class="form-select" id="structure_id" name="structure_id" required>
+                <label for="STRUCTURE_ID" class="form-label">Structure</label>
+                <select class="form-select" id="STRUCTURE_ID" name="STRUCTURE_ID" required>
                     <option value="">Choisir...</option>
                     @foreach($structures as $structure)
-                        <option value="{{ $structure->NOM }}" {{ old('structure_id') == $structure->NOM ? 'selected' : '' }}>
+                        <option value="{{ $structure->NOM }}" {{ old('STRUCTURE_ID') == $structure->NOM ? 'selected' : '' }}>
                             {{ $structure->NOM }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="mb-3">
-                <label for="password" class="form-label">Mot de passe</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="password_confirmation" class="form-label">Confirmer le mot de passe</label>
-                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-            </div>
 
             <button type="submit" class="btn btn-primary">S'inscrire</button>
         </form>

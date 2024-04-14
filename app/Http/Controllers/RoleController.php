@@ -45,19 +45,12 @@ class RoleController extends Controller
 
 public function update(Request $request, $id)
 {
+    $role = Role::find($id);
 
-    $request->validate([
-        'NOM' => 'required|string|max:255',
-    ]);
+    $role->NOM = $request->input('NOM');
+    $role->save();
 
-    $role = Role::findOrFail($id);
-    $role->update([
-        'NOM' => $request->NOM,
-    ]);
-
-        // Redirection avec un message de succès
-        return redirect()->route('roles.index')->with('success', 'Rôle mis à jour avec succès.');
-
+    return redirect()->route('roles.index')->with('success', 'Nom du rôle mis à jour avec succès');
 }
 
     public function destroy($id)

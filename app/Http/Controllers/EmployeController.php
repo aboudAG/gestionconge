@@ -40,25 +40,20 @@ class EmployeController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
+        dd($validatedData = $request->validate([
             // Valide les entrées. Adaptez les règles à vos besoins.
-            'matricule' => 'required|string|unique:employes,matricule',
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'poste' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:employes,email',
-            'date_embauche' => 'required|date',
-            'structure_id' => 'required|exists:structures,id',
-            'role_id' => 'required|exists:roles,id',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+            'MATRICULE' => 'required|string|unique:employes,matricule',
+            'NOM' => 'required|string|max:255',
+            'PRENOM' => 'required|string|max:255',
+            'POSTE' => 'required|string|max:255',
+            'DATE_EMBAUCHE' => 'required|date',
+            'STRUCTURE_ID' => 'required|exists:structures,id',
+            'ROLE_ID' => 'required|exists:roles,id',
 
-        $employe = new Employe($validatedData);
+        ]));
 
-        $employe->password = bcrypt($request->password);
-        $employe = Employe::create($validatedData); // Assurez-vous de hasher le mot de passe avant de le stocker.
-        $employe->save(); // Sauvegarde l'employé dans la base de données.
-        
+        dd($employe = Employe::create($validatedData));
+
         return redirect()->route('employes.index')->with('success', 'Employé créé avec succès.'); // Redirige vers la liste des employés avec un message de succès.
     }
     /**

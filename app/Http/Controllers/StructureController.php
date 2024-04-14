@@ -35,6 +35,14 @@ class StructureController extends Controller
         return redirect()->route('structures.index')->with('success', 'Structure ajoutée avec succès.');
     }
 
+    /**
+ * Show the form for editing the specified role.
+ *
+ * @param  int  $id
+ * @return \Illuminate\Http\Response
+ */
+
+
     public function edit($id)
     {
         // Trouver la structure par son ID
@@ -43,6 +51,15 @@ class StructureController extends Controller
         // Retourner la vue d'édition avec la structure à modifier
         return view('structures.edit', compact('structure'));
     }
+
+    /**
+ * Update the specified role in storage.
+ *
+ * @param  \Illuminate\Http\Request  $request
+ * @param  int  $ID
+ * @return \Illuminate\Http\Response
+ */
+
 
     // Méthode pour mettre à jour la structure dans la base de données
     public function update(Request $request, $ID)
@@ -64,7 +81,7 @@ class StructureController extends Controller
         return redirect()->route('structures.index')->with('success', 'Structure mise à jour avec succès.');
     }
 
-    public function destroy($ID)
+    public function destroy(string $ID)
 {
     $structure = Structure::findOrFail($ID); // Trouver la structure ou échouer si non trouvée
     $structure->delete(); // Supprimer la structure
