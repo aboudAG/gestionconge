@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EmployeController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StructureController;
+use App\Http\Controllers\TypeController;
+use App\Http\Controllers\DemandeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +39,10 @@ require __DIR__.'/auth.php';
 Route::get('/employes', [EmployeController::class, 'index'])->name('employes.index');
 Route::get('/employes/create', [EmployeController::class, 'create'])->name('employes.create');
 Route::post('/employes', [EmployeController::class, 'store'])->name('employes.store');
+Route::get('/employes/{ID}/edit', [EmployeController::class, 'edit'])->name('employes.edit');
+Route::put('/employes/{ID}', [EmployeController::class, 'update'])->name('employes.update');
+Route::delete('/employes/{ID}', [EmployeController::class, 'destroy'])->name('employes.destroy');
+
 
 Route::get('/structures', [StructureController::class, 'index'])->name('structures.index');
 Route::get('/structures/create', [StructureController::class, 'create'])->name('structures.create');
@@ -50,8 +56,18 @@ Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
 Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
 Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
 Route::get('/roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
-Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
-Route::delete('/roles/{role}/delete', [RoleController::class, 'destroy'])->name('roles.destroy');
+Route::put('roles/{id}/edit', [RoleController::class, 'update']);
+Route::get('roles/{id}/delete', [RoleController::class, 'destroy']);
+
+
+Route::get('/types', [TypeController::class, 'index'])->name('types.index');
+Route::get('/types/create', [TypeController::class, 'create'])->name('types.create');
+Route::post('/types', [TypeController::class, 'store'])->name('types.store');
+Route::get('/types/{id}/edit', [TypeController::class, 'edit'])->name('types.edit');
+Route::put('/types/{id}', [TypeController::class, 'update'])->name('types.update');
+Route::delete('/types/{id}', [TypeController::class, 'destroy'])->name('types.destroy');
+
+Route::get('/demandes/create', [DemandeController::class, 'create'])->name('demandes.create');
 
 
 

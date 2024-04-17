@@ -5,6 +5,12 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
+        <div>
+            <x-input-label for="MATRICULE" :value="__('MATRICULE')" />
+            <x-text-input id="MATRICULE" class="block mt-1 w-full" type="text" name="MATRICULE" :value="old('MATRICULE')" required autofocus />
+            <x-input-error :messages="$errors->get('MATRICULE')" class="mt-2" />
+        </div>
+
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />

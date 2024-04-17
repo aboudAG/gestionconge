@@ -14,11 +14,6 @@ class Employe extends Model
 
     protected $primaryKey = 'MATRICULE';
 
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
-
     protected $fillable = [
         'MATRICULE',
         'NOM',
@@ -26,16 +21,11 @@ class Employe extends Model
         'POSTE',
         'STRUCTURE_ID',
         'ROLE_ID',
-
-    ];
-
-
-    protected $dates = [
         'DATE_EMBAUCHE',
-        'created_at',
-        'updated_at',
 
     ];
+
+
 
     public function structure()
     {

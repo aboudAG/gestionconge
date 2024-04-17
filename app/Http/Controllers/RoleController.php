@@ -25,7 +25,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'NOM' => 'required|max:255',
+            'NOM' => 'required|max:50',
             // Ajoutez d'autres règles de validation si nécessaire
         ]);
 
@@ -45,19 +45,24 @@ class RoleController extends Controller
 
 public function update(Request $request, $id)
 {
-    $role = Role::find($id);
+    $validatedData = $request->validate([
+        'NOM' => 'required|max:50',
+        // Ajoutez d'autres règles de validation si nécessaire
+    ]);
 
-    $role->NOM = $request->input('NOM');
-    $role->save();
+    $role = Role::findOrFail($id);
+    Role::where('id' , $id)->update([
+        'NOM' => $request->NOM,
+    ]);
+
 
     return redirect()->route('roles.index')->with('success', 'Nom du rôle mis à jour avec succès');
 }
+public function destroy($id)
+{
+    $role = Role::findOrFail($id);
+    Role::where('id',$id)->delete();
 
-    public function destroy($id)
-    {
-        $role = Role::findOrFail($id);
-        $role->delete();
-
-        return redirect()->route('roles.index')->with('success', 'Role deleted successfully');
-    }
+    return redirect()->back()->with('success', 'Role deleted successfully');
+}
 }

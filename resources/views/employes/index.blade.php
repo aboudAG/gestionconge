@@ -31,9 +31,17 @@
                 <td>{{ $employe->NOM }}</td>
                 <td>{{ $employe->PRENOM }}</td>
                 <td>{{ $employe->POSTE }}</td>
-                <td>{{ $employe->DATE_EMBAUCHE->format('d/m/Y') }}</td>
+                <td>{{ $employe->DATE_EMBAUCHE}}</td>
                 <td>{{ $employe->structure->NOM }}</td>
                 <td>{{ $employe->role->NOM }}</td>
+                <td>
+                    <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-primary">Modifier</a>
+                    <form action="{{ route('employes.destroy', $employe->MATRICULE) }}" method="POST" style="display: inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </td>
 
             </tr>
             @endforeach

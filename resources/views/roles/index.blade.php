@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
         <title>Document</title>
     </head>
     <body>
@@ -26,11 +28,7 @@
                         <td>
                             {{-- Ici, ajoutez les liens pour modifier ou supprimer les rôles --}}
                             <a href="{{ route('roles.edit', $role->ID) }}" class="btn btn-primary">Éditer</a>
-                            <form action="{{ route('roles.destroy', $role->ID) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?');">Supprimer le Rôle</button>
-                            </form>
+                            <a href="{{url('roles/'.$role->ID.'/delete')}}">supprimer</a>
                     </tr>
                     @endforeach
                 </tbody>

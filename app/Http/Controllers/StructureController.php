@@ -65,17 +65,22 @@ class StructureController extends Controller
     public function update(Request $request, $ID)
     {
         // Valider les données reçues du formulaire
-        // $validatedData = $request->validate([
-        //     'CODE' => 'required|string|max:255',
-        //     'NOM' => 'required|string|max:255',
-        //     'TYPE' => 'required|string|max:255',
-        //     'PARENT_ID' => 'nullable|integer',
-        // ]);
+        $validatedData = $request->validate([
+            'CODE' => 'required|string|max:255',
+            'NOM' => 'required|string|max:255',
+            'TYPE' => 'required|string|max:255',
+            'PARENT_ID' => 'nullable|integer',
+        ]);
+
 
 
         $structure = Structure::findOrFail($ID);
-        $structure->update($request->all());
-
+            Structure::where('ID',$ID)->update([
+                'CODE' => $request->CODE,
+                'NOM' => $request->NOM,
+                'TYPE' => $request->TYPE,
+                'PARENT_ID' => $request->PARENT_ID,
+            ]);
 
 
         return redirect()->route('structures.index')->with('success', 'Structure mise à jour avec succès.');
@@ -84,7 +89,8 @@ class StructureController extends Controller
     public function destroy(string $ID)
 {
     $structure = Structure::findOrFail($ID); // Trouver la structure ou échouer si non trouvée
-    $structure->delete(); // Supprimer la structure
+    Structure::where('ID', $ID)->delete();
+ // Supprimer la structure
 
     // Redirection vers l'index avec un message flash de succès
     return redirect()->route('structures.index')->with('success', 'Structure supprimée avec succès.');

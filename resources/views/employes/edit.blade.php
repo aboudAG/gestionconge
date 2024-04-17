@@ -9,39 +9,40 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{ route('employes.store') }}" method="POST">
+    <form action="{{ route('employes.update', $employe->MATRICULE) }}" method="POST">
         @csrf
 
+        @method('PUT')
         <div class="form-group">
             <label for="MATRICULE">Matricule</label>
-            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE">
+            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{$employe->MATRICULE}}">
         </div>
 
         <div class="form-group">
             <label for="NOM">Nom</label>
-            <input type="text" class="form-control" id="NOM" name="NOM">
+            <input type="text" class="form-control" id="NOM" name="NOM"  value="{{$employe->NOM}}">
         </div>
 
         <div class="form-group">
             <label for="PRENOM">Preom</label>
-            <input type="text" class="form-control" id="PRENOM" name="PRENOM">
+            <input type="text" class="form-control" id="PRENOM" name="PRENOM"  value="{{$employe->PRENOM}}">
         </div>
 
         <div class="form-group">
             <label for="POSTE">Poste</label>
-            <input type="text" class="form-control" id="POSTE" name="POSTE">
+            <input type="text" class="form-control" id="POSTE" name="POSTE"  value="{{$employe->POSTE}}">
         </div>
 
         <div class="form-group">
             <label for="DATE_EMBAUCHE">Date d'embauche</label>
-            <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" required>
+            <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE"  value="{{$employe->DATE_EMBAUCHE}}"required>
         </div>
 
         <!-- Ajoute d'autres champs selon tes besoins -->
 
         <div class="form-group">
             <label for="ROLE">Rôle</label>
-            <select class="form-control" id="ROLE" name="ROLE_ID">
+            <select class="form-control" id="ROLE" name="ROLE_ID"  >
                 @foreach($roles as $role)
                     <option value="{{ $role->ID }}">{{ $role->NOM }}</option>
                 @endforeach
@@ -57,7 +58,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Créer Employé</button>
+        <button type="submit" class="btn btn-primary">Soumettre</button>
     </form>
 
         </form>

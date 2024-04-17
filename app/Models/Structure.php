@@ -24,7 +24,6 @@ class Structure extends Model
         'UPDATED_AT',
     ];
 
-
     public function parent()
     {
         return $this->belongsTo(Structure::class, 'PARENT_ID');

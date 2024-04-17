@@ -8,13 +8,13 @@
 <body>
     <div class="container">
         <h1>Modifier le Rôle</h1>
-        <form action="{{ route('roles.update', $role->ID) }}" method="POST">
+        <form action="{{ url('roles/'.$role->ID.'/edit') }}" method="POST">
             @csrf
             @method('PUT')
 
             <div class="form-group">
                 <label for="NOM">Nom du Rôle</label>
-                <input type="text" class="form-control" id="NOM" name="NOM" value="{{ old('NOM', $role->NOM) }}" required>
+                <input type="text" class="form-control" id="NOM" name="NOM" value= "{{$role->NOM }}" required>
             </div>
 
             <button type="submit" class="btn btn-primary">Mettre à jour</button>
