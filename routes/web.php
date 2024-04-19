@@ -68,6 +68,7 @@ Route::put('/types/{id}', [TypeController::class, 'update'])->name('types.update
 Route::delete('/types/{id}', [TypeController::class, 'destroy'])->name('types.destroy');
 
 Route::get('/demandes/create', [DemandeController::class, 'create'])->name('demandes.create');
+Route::post('/demandes', [DemandeController::class, 'store'])->name('demandes.store');
 
 
 

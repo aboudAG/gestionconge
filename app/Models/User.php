@@ -43,4 +43,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function employe()
+    {
+        // Supposons que vous avez une clé étrangère 'MATRICULE' dans la table 'employes' qui correspond à 'MATRICULE' dans la table 'users'.
+        return $this->hasOne(Employe::class, 'MATRICULE', 'MATRICULE');
+    }
 }

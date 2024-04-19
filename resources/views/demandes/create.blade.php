@@ -1,137 +1,178 @@
-<!
-DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Calendrier de Demande de Congé</title>
     <style>
-        .calendar-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
+        .calendar-navigation {
+            text-align: center;
+            margin: 10px 0;
         }
-        .month {
+        .calendar-month {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
+            font-family: Arial, sans-serif;
+            margin: 5px;
+        }
+        .month-label {
+            padding: 5px;
+            font-weight: bold;
         }
         .days-container {
             display: flex;
-            background: #f0f0f0;
-            padding: 5px;
-            flex-wrap: wrap;
+            margin-bottom: 10px;
         }
         .day {
-            width: 2.5em;
-            margin: 2px;
+            width: 2em;
             text-align: center;
             cursor: pointer;
         }
         .weekend {
             background-color: #ADD8E6;
         }
-        .selected {
+        .selected-range {
             background-color: #FFD700;
         }
-        .month-name {
-            font-size: 1em;
-            font-weight: bold;
-        }
-        .form-group label {
-            display: block;
+        .btn {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
             margin-top: 10px;
+        }
+        .form-group {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Faire une demande</h2>
-        <div id="calendar"></div>
-        <form id="demandeCongeForm" style="margin-top: 20px;">
-            <div class="form-group">
-                <label for="date_debut">Date de début:</label>
-                <input type="text" id="date_debut" name="DATE_DEBUT" readonly>
-            </div>
-            <div class="form-group">
-                <label for="date_fin">Date de fin:</label>
-                <input type="text" id="date_fin" name="DATE_FIN" readonly>
-            </div>
-            <button type="submit" class="btn btn-primary">Envoyer la demande</button>
-        </form>
+    <div class="calendar-navigation">
+        <button onclick="navigateCalendar(-1)">&#x25B2;</button>
+        <button onclick="navigateCalendar(1)">&#x25BC;</button>
     </div>
+    <div id="calendar"></div>
+    <form action="{{ route('demandes.store') }}" method="POST" id="leaveRequestForm">
+        @csrf <!-- Ajout du token CSRF -->
+    <div class="form-group">
+        <label for="startDate">Date de début :</label>
+        <input type="date" id="startDate" name="DATE_DEBUT" readonly> <!-- Changement du type en 'date' -->
+    </div>
+    <div class="form-group">
+        <label for="endDate">Date de fin :</label>
+        <input type="date" id="endDate" name="DATE_FIN" readonly> <!-- Changement du type en 'date' -->
+    </div>
+        <div class="form-group">
+            <label for="TITRE">Titre</label>
+            <input type="text" class="form-control" id="TITRE" name="TITRE">
+        </div>
+        <div class="form-group">
+            <label for="TYPE_ID">Type</label>
+            <select class="form-control" id="TYPE_ID" name="TYPE_ID">
+                @foreach($types as $type)
+                    <option value="{{ $type->ID }}">{{ $type->NOM }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="EMPLOYE_REMPLACEMENT_ID">Employe remplacant</label>
+            <select class="form-control" id="EMPLOYE_REMPLACEMENT_ID" name="EMPLOYE_REMPLACEMENT_ID">
+                @foreach($employes as $employe)
+                    <option value="{{ $employe->ID }}">{{ $employe->NOM }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn" >Envoyer la demande</button>
+    </form>
     <script>
-        const months = ["Septembre", "Octobre", "Novembre", "Décembre"]; // Example months
-        const calendarContainer = document.querySelector('#calendar');
+        const calendarEl = document.getElementById('calendar');
         let selectedStartDate = null;
         let selectedEndDate = null;
+        let currentMonthOffset = 0;
+        const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
-        function updateFormWithSelectedDates() {
-            const dateDebutInput = document.getElementById('date_debut');
-            const dateFinInput = document.getElementById('date_fin');
-            dateDebutInput.value = selectedStartDate ? selectedStartDate.toISOString().split('T')[0] : '';
-            dateFinInput.value = selectedEndDate ? selectedEndDate.toISOString().split('T')[0] : '';
+        function createCalendar() {
+            calendarEl.innerHTML = ''; // Clear the calendar
+            const today = new Date();
+            const currentMonth = today.getMonth() + currentMonthOffset;
+            const currentYear = today.getFullYear();
+            for (let i = 0; i < 4; i++) { // Four months at a time
+                let monthDate = new Date(currentYear, currentMonth + i, 1);
+                let daysInMonth = new Date(currentYear, currentMonth + i + 1, 0).getDate();
+                let monthContainer = document.createElement('div');
+                monthContainer.className = 'calendar-month';
+                let monthLabel = document.createElement('div');
+                monthLabel.className = 'month-label';
+                monthLabel.textContent = monthNames[monthDate.getMonth()] + ' ' + monthDate.getFullYear();
+                monthContainer.appendChild(monthLabel);
+                let daysContainer = document.createElement('div');
+                daysContainer.className = 'days-container';
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    let dayEl = document.createElement('div');
+                    dayEl.className = 'day';
+                    if ((new Date(currentYear, currentMonth + i, day).getDay() + 1) % 7 === 1 || (new Date(currentYear, currentMonth + i, day).getDay() + 1) % 7 === 0) { // Weekend
+                        dayEl.classList.add('weekend');
+                    }
+                    dayEl.textContent = day;
+                    dayEl.dataset.date = `${monthDate.getFullYear()}-${('0' + (monthDate.getMonth() + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+                    dayEl.onclick = () => selectDate(new Date(currentYear, currentMonth + i, day), dayEl);
+                    daysContainer.appendChild(dayEl);
+                }
+                monthContainer.appendChild(daysContainer);
+                calendarEl.appendChild(monthContainer);
+            }
+        }
+
+        function selectDate(date, dayEl) {
+            if (!selectedStartDate || date < selectedStartDate || (selectedStartDate && selectedEndDate)) {
+                clearSelection();
+                selectedStartDate = date;
+                selectedEndDate = null;
+                dayEl.classList.add('selected-range');
+                updateFormFields();
+            } else if (selectedStartDate && !selectedEndDate && date >= selectedStartDate) {
+                selectedEndDate = date;
+                updateFormFields();
+                highlightRange();
+            }
+        }
+
+        function updateFormFields() {
+            document.getElementById('startDate').value = selectedStartDate ? selectedStartDate.toISOString().split('T')[0] : '';
+            document.getElementById('endDate').value = selectedEndDate ? selectedEndDate.toISOString().split('T')[0] : '';
         }
 
         function clearSelection() {
-            selectedStartDate = null;
-            selectedEndDate = null;
-            document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
-            updateFormWithSelectedDates();
+            document.querySelectorAll('.day').forEach(dayEl => dayEl.classList.remove('selected-range'));
         }
 
-        function selectDate(dayElement, year, month, day) {
-            const date = new Date(year, month, day);
-            if (!selectedStartDate || (date < selectedStartDate || selectedEndDate)) {
-                clearSelection();
-                selectedStartDate = date;
-                dayElement.classList.add('selected');
-            } else if (selectedStartDate && !selectedEndDate && date >= selectedStartDate) {
-                selectedEndDate = date;
-                dayElement.classList.add('selected');
-                updateFormWithSelectedDates();
+        function highlightRange() {
+            document.querySelectorAll('.day').forEach(dayEl => {
+                let dayDate = new Date(dayEl.dataset.date);
+                if (dayDate >= selectedStartDate && dayDate <= selectedEndDate) {
+                    dayEl.classList.add('selected-range');
+                }
+            });
+        }
+
+        function navigateCalendar(offset) {
+            currentMonthOffset += offset;
+            createCalendar();
+            if (selectedStartDate && selectedEndDate) {
+                highlightRange();
             }
         }
 
-        function createDay(year, month, day, isWeekend) {
-            const dayElement = document.createElement('div');
-            dayElement.textContent = day;
-            dayElement.className = `day ${isWeekend ? 'weekend' : ''}`;
-            dayElement.onclick = () => selectDate(dayElement, year, month, day);
-            return dayElement;
-        }
+        function submitForm() {
+        document.getElementById('leaveRequestForm').submit(); // Soumission du formulaire
+    }
 
-        function createMonth(year, monthIndex) {
-            const month = document.createElement('div');
-            month.className = 'month';
-
-            const monthName = document.createElement('div');
-            monthName.textContent = months[monthIndex];
-            monthName.className = 'month-name';
-            month.appendChild(monthName);
-
-            const daysContainer = document.createElement('div');
-            daysContainer.className = 'days-container';
-            month.appendChild(daysContainer);
-
-            for (let day = 1; day <= 31; day++) {
-                // For simplicity, assuming all months have 31 days. Adjust logic for correct days per month.
-                const dayOfWeek = new Date(year, monthIndex, day).getDay();
-                const isWeekend = dayOfWeek === 5 || dayOfWeek === 6; // Mark Friday and Saturday as weekend
-                const dayElement = createDay(year, monthIndex, day, isWeekend);
-                daysContainer.appendChild(dayElement);
-            }
-
-            return month;
-        }
-
-        // Initialize the months
-        const currentYear = new Date().getFullYear();
-        for (let i = 0; i < months.length; i++) {
-            const monthBlock = createMonth(currentYear, i + 8); // Starting from September
-            calendarContainer.appendChild(monthBlock);
-        }
+        // Initialize the calendar
+        createCalendar();
     </script>
-    </body>
-    </html>
+</body>
+</html>
