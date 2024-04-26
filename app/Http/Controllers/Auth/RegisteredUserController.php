@@ -35,11 +35,11 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'MATRICULE' => ['required', 'exists:employes,MATRICULE'],
+            'MATRICULE' => 'required',
         ]);
 
          // Récupère l'employé correspondant à la matricule fournie
-         $employe = Employe::where('MATRICULE', $request->MATRICULE)->firstOrFail();
+         //$employe = Employe::where('MATRICULE', $request->MATRICULE)->firstOrFail();
 
 
          $user = User::create([
@@ -53,6 +53,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return Redirect::route('demandes.create');
+        return redirect()->route('demandes.create');
     }
 }

@@ -4,7 +4,15 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Models\Structure;
 use App\Models\Employe;
+use App\Models\User;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class EmployeController extends Controller
 {
@@ -24,8 +32,8 @@ class EmployeController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'MATRICULE' => 'required|unique:employes',
+        $validatedData = $request->validate([
+            'MATRICULE' => 'required|unique:employes,MATRICULE',
             'NOM' => 'required',
             'PRENOM' => 'required',
             'POSTE' => 'required',
@@ -33,9 +41,38 @@ class EmployeController extends Controller
             'ROLE_ID' => 'required',
             'DATE_EMBAUCHE' => 'required|date',
         ]);
-
         // Crée un nouvel employé avec les données validées
-        Employe::create($request->all());
+        $employe = new Employe();
+        $employe->MATRICULE = $validatedData['MATRICULE'];
+        $employe->NOM = $validatedData['NOM'];
+        $employe->PRENOM = $validatedData['PRENOM'];
+        $employe->POSTE = $validatedData['POSTE'];
+        $employe->STRUCTURE_ID = $validatedData['STRUCTURE_ID'];
+        $employe->ROLE_ID = $validatedData['ROLE_ID'];
+        $employe->DATE_EMBAUCHE = $validatedData['DATE_EMBAUCHE'];
+        $employe->save();
+
+        $request->validate([
+            'MATRICULE' => 'required',
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'password' => [
+                'required',
+                'confirmed',
+                Password::defaults() // This applies the default password rules
+            ],
+        ]);
+
+
+
+         $user = User::create([
+             'name' => $request->name,
+             'email' => $request->email,
+             'password' => Hash::make($request->password),
+             'MATRICULE' => $request->MATRICULE,
+         ]);
+
+        event(new Registered($user));
 
         // Redirige l'utilisateur vers une page appropriée après la création
         return redirect()->route('employes.index')->with('success', 'Employé créé avec succès.');
@@ -58,7 +95,7 @@ public function update(Request $request, $ID)
 {
     // Valider les données reçues du formulaire
     $validatedData = $request->validate([
-        'MATRICULE' => 'required|string|max:255',
+
         'NOM' => 'required|string|max:255',
         'PRENOM' => 'required|string|max:255',
         'POSTE' => 'required|string|max:255',
@@ -68,8 +105,7 @@ public function update(Request $request, $ID)
     ]);
 
     // Met à jour l'employé dans la base de données
-    Employe::where('MATRICULE', $ID)->update([
-        'MATRICULE' => $request->MATRICULE,
+    Employe::where('ID', $ID)->update([
         'NOM' => $request->NOM,
         'PRENOM' => $request->PRENOM,
         'POSTE' => $request->POSTE,
@@ -84,14 +120,19 @@ public function update(Request $request, $ID)
 
 public function destroy($ID)
 {
-    // Trouve l'employé à supprimer dans la base de données
-    $employe = Employe::where('MATRICULE', $ID)->firstOrFail();
+    // Trouve l'employé et l'utilisateur associé dans la base de données
+    $employe = Employe::findOrFail($ID);
+    $user = User::where('MATRICULE', $employe->MATRICULE)->firstOrFail();
 
-    // Supprime l'employé
+    // Supprime d'abord l'utilisateur pour éviter des problèmes de clé étrangère
+    $user->delete();
+
+    // Ensuite, supprime l'employé
     $employe->delete();
 
     // Redirige l'utilisateur vers une page appropriée après la suppression
-    return redirect()->route('employes.index')->with('success', 'Employé supprimé avec succès.');
+    return redirect()->route('employes.index')->with('success', 'Employé et utilisateur associé supprimés avec succès.');
 }
+
 
 }

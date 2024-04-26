@@ -16,6 +16,7 @@ class Structure extends Model
         'NOM',
         'TYPE',
         'PARENT_ID',
+        'CHEMIN',
 
     ];
 

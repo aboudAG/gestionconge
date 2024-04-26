@@ -1,8 +1,9 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Calendrier de Demande de Congé</title>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Demande de Congé') }}
+        </h2>
+    </x-slot>
     <style>
         .calendar-navigation {
             text-align: center;
@@ -47,8 +48,7 @@
             margin-bottom: 10px;
         }
     </style>
-</head>
-<body>
+
     <div class="calendar-navigation">
         <button onclick="navigateCalendar(-1)">&#x25B2;</button>
         <button onclick="navigateCalendar(1)">&#x25BC;</button>
@@ -87,6 +87,8 @@
 
         <button type="submit" class="btn" >Envoyer la demande</button>
     </form>
+
+</x-app-layout>
     <script>
         const calendarEl = document.getElementById('calendar');
         let selectedStartDate = null;
@@ -174,5 +176,4 @@
         // Initialize the calendar
         createCalendar();
     </script>
-</body>
-</html>
+

@@ -9,14 +9,10 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{ route('employes.update', $employe->MATRICULE) }}" method="POST">
+    <form action="{{ route('employes.update', $employe->ID) }}" method="POST">
         @csrf
 
         @method('PUT')
-        <div class="form-group">
-            <label for="MATRICULE">Matricule</label>
-            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{$employe->MATRICULE}}">
-        </div>
 
         <div class="form-group">
             <label for="NOM">Nom</label>

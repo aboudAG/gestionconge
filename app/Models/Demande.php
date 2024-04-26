@@ -19,6 +19,7 @@ class Demande extends Model
         'DATE_FIN',
         'EMPLOYE_REMPLACEMENT_ID',
         'DATE_CREATION',
+        'ETAPE',
     ];
 
     // Relation avec le modèle Employe
@@ -31,4 +32,9 @@ class Demande extends Model
 {
     return $this->belongsTo(Type::class, 'TYPE_DEMANDE', 'ID');
 }
+
+    public function statuts()
+    {
+        return $this->hasMany(StatutConge::class, 'DEMANDE_CONGE_ID', 'ID');
+    }
 }

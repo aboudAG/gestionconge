@@ -15,7 +15,6 @@ class Employe extends Model
     protected $primaryKey = 'MATRICULE';
 
     protected $fillable = [
-        'MATRICULE',
         'NOM',
         'PRENOM',
         'POSTE',
@@ -35,5 +34,10 @@ class Employe extends Model
     public function role()
     {
         return $this->belongsTo(Role::class, 'ROLE_ID');
+    }
+
+    public function demandes()
+    {
+        return $this->hasMany(Demande::class, 'EMPLOYE_ID', 'MATRICULE');
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StructureController;
 use App\Http\Controllers\TypeController;
 use App\Http\Controllers\DemandeController;
+use App\Http\Controllers\StatutCongeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,6 +70,8 @@ Route::delete('/types/{id}', [TypeController::class, 'destroy'])->name('types.de
 
 Route::get('/demandes/create', [DemandeController::class, 'create'])->name('demandes.create');
 Route::post('/demandes', [DemandeController::class, 'store'])->name('demandes.store');
+
+Route::get('/statutsconges', [StatutCongeController::class, 'index'])->name('statutsconges.index');
 
 
 
