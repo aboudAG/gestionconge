@@ -5,12 +5,14 @@ use App\Models\Role;
 use App\Models\Structure;
 use App\Models\Employe;
 use App\Models\User;
+use App\Models\DroitConge;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 
 
@@ -120,15 +122,18 @@ public function update(Request $request, $ID)
 
 public function destroy($ID)
 {
-    // Trouve l'employé et l'utilisateur associé dans la base de données
-    $employe = Employe::findOrFail($ID);
-    $user = User::where('MATRICULE', $employe->MATRICULE)->firstOrFail();
+    DB::transaction(function () use ($ID) {
+        // Trouve l'employé et l'utilisateur associé dans la base de données
+        $employe = Employe::findOrFail($ID);
+        $user = User::where('MATRICULE', $employe->MATRICULE)->firstOrFail();
+        $droitConge = DroitConge::where('EMPLOYE_ID', $employe->MATRICULE)->firstOrFail();
+        // Supprime l'utilisateur associé
+        $user->delete();
+        $droitConge->delete();
 
-    // Supprime d'abord l'utilisateur pour éviter des problèmes de clé étrangère
-    $user->delete();
-
-    // Ensuite, supprime l'employé
-    $employe->delete();
+        // Supprime ensuite l'employé
+        $employe->delete();
+    });
 
     // Redirige l'utilisateur vers une page appropriée après la suppression
     return redirect()->route('employes.index')->with('success', 'Employé et utilisateur associé supprimés avec succès.');

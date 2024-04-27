@@ -19,10 +19,34 @@ class DemandeController extends Controller
 {
     public function create()
     {
-        $types = Type::all();
-        $employes = Employe::all();
-        $statutConge = StatutConge::all();
-        return view('demandes.create', ['types' => $types, 'employes' => $employes, 'statutConge' => $statutConge]);
+           // Récupérer l'utilisateur connecté via l'authentification
+    $user = Auth::user();
+
+    // Assurez-vous que l'utilisateur est bien un employé et qu'il a un matricule associé
+    if (!$user || !$user->MATRICULE) {
+        return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
+    }
+
+    // Récupérer l'employé à partir de son matricule
+    $employe = Employe::with('droitConges')->find($user->MATRICULE);
+    // dd($employe = Employe::find($user->MATRICULE));
+    // $droitConge = $employe->droitConges ?? null;
+
+    // S'assurer que l'employé existe
+    if (!$employe) {
+        return redirect()->route('login')->withErrors('Employé non trouvé.');
+    }
+
+    // Récupérer les types de congé disponibles
+    $employes = Employe::all();
+    $types = Type::all(); // Assurez-vous que le modèle Type et la table sont correctement configurés
+
+    // Passer les données à la vue
+    return view('demandes.create', [
+        'types' => $types,
+        'employes' => $employes, // vous pouvez choisir de passer l'employé entier
+        'droitConges' => $employe->droitConges // passer les droits de congé associés à l'employé
+    ]);
     }
 
 
@@ -56,7 +80,7 @@ class DemandeController extends Controller
             // Commencer une transaction de base de données
             DB::beginTransaction();
 
-            // try {
+             try {
                 // Créer une nouvelle demande avec l'ID de l'employé récupéré
                 $demande = Demande::create([
                     'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
@@ -82,12 +106,12 @@ class DemandeController extends Controller
                 // Valider la transaction de base de données
                 DB::commit();
 
-                return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'La demande de congé a été enregistrée avec succès.');
-            // } catch (Exception $e) {
-            //     // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
-            //     DB::rollBack();
-            //     return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
-            // }
+                return redirect()->route('statutsconges.index')->with('success', 'La demande de congé a été enregistrée avec succès.');
+            } catch (Exception $e) {
+                 // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
+                 DB::rollBack();
+                 return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
+             }
         } else {
             // Gérer le cas où l'employé n'est pas trouvé
             return redirect()->intended('login');
