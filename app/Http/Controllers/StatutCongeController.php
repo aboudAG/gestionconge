@@ -24,7 +24,7 @@ class StatutCongeController extends Controller
         // Vérifier si l'employé existe
         if ($employe) {
             // Récupérer toutes les demandes de congé de l'employé avec leurs statuts
-            $demandes = $employe->demandes()->with('statuts')->get();
+            $demandes = $employe->demandes()->with('statuts.etape')->get();
 
             return view('statutsconges.index', compact('demandes'));
         }

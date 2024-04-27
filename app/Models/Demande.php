@@ -19,7 +19,6 @@ class Demande extends Model
         'DATE_FIN',
         'EMPLOYE_REMPLACEMENT_ID',
         'DATE_CREATION',
-        'ETAPE',
     ];
 
     // Relation avec le modèle Employe
@@ -36,5 +35,10 @@ class Demande extends Model
     public function statuts()
     {
         return $this->hasMany(StatutConge::class, 'DEMANDE_CONGE_ID', 'ID');
+    }
+
+    public function etapes()
+    {
+        return $this->hasMany(Etape::class, 'DEMANDE_CONGE_ID', 'ID');
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Type;
+use App\Models\Etape;
 use App\Models\Employe;
 use App\Models\Demande;
 use App\Models\StatutConge;
@@ -70,13 +71,18 @@ class DemandeController extends Controller
               $employe = Employe::find($user->MATRICULE);
               $structureType = $employe->structure->TYPE ?? null;
 
-              $etape = match ($structureType) {
-                  'SERVICE' => 'service',
-                  'DZPARTEMENT' => 'departement',
-                  'DIRECTION' => 'direction',
-                  'RH' => 'rh',
-                  default => throw new Exception('Type de structure inconnu'),
-              };
+              $etapesPermis = ['Service', 'Departement', 'Direction', 'RH']; // Utilisez les noms avec la première lettre en majuscule
+              $structureTypeFormate = ucfirst(strtolower($structureType)); // Convertir en format avec la première lettre en majuscule
+
+              if (!in_array($structureTypeFormate, $etapesPermis)) {
+                  throw new Exception('Type de structure inconnu');
+              }
+
+              // Récupérer l'ID de l'étape
+              $etape = Etape::where('nom', $structureTypeFormate)->first();
+              if (!$etape) {
+                  throw new Exception("Aucune étape trouvée pour le type de structure spécifié");
+              }
             // Commencer une transaction de base de données
             DB::beginTransaction();
 
@@ -90,18 +96,20 @@ class DemandeController extends Controller
                     'DATE_FIN' => $request->input('DATE_FIN'),
                     'EMPLOYE_REMPLACEMENT_ID' => $request->input('EMPLOYE_REMPLACEMENT_ID'),
                     'DATE_CREATION' => now(),
-                    'ETAPE' => $etape ,
+
                 ]);
 
                 // Créer une nouvelle entrée dans la table statut_conges
                 $statutConge = StatutConge::create([
                     'STATUT_ID' => null,
-                    'ETAPE' => $etape, // Définir le statut initial comme "EN_ATTENTE"
                     'DEMANDE_CONGE_ID' => $demande->id,
                     'STATUT' => 'En Attente',
                     'APPROUVEUR_ID' => null,
-                    'DATE_DECISION' => now(), // Utiliser la date actuelle pour la date de décision
+                    'DATE_DECISION' => now(),
+                    'ETAPE_ID' => $etape->ID, // Utiliser la date actuelle pour la date de décision
                 ]);
+
+
 
                 // Valider la transaction de base de données
                 DB::commit();

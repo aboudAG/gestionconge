@@ -5,25 +5,16 @@
         </h2>
     </x-slot>
     <style>
-        .calendar-navigation {
+        /* .calendar-navigation {
             text-align: center;
             margin: 10px 0;
         }
-        .calendar-month {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            font-family: Arial, sans-serif;
-            margin: 5px;
-        }
+
         .month-label {
             padding: 5px;
             font-weight: bold;
         }
-        .days-container {
-            display: flex;
-            margin-bottom: 10px;
-        }
+
         .day {
             width: 2em;
             text-align: center;
@@ -35,17 +26,96 @@
         .selected-range {
             background-color: #FFD700;
         }
-        .btn {
+
+        .form-group {
+            margin-bottom: 10px;
+        } */
+
+        .calendar-container {
+    width: 100%;
+}
+
+.day-numbers-header {
+    display: flex;
+    justify-content: space-between; /* Assure une distribution égale */
+    padding: 0 10px; /* Padding sur les côtés pour l'alignement avec les jours */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optionnel: ajoute une ombre pour distinguer l'en-tête */
+    background: #f8f9fa; /* Couleur de fond de l'en-tête des numéros */
+}
+
+.day-number {
+    flex: 1;
+    text-align: center;
+    padding: 5px 0;
+    font-size: 18px;
+}
+
+.calendar-month {
+    margin-bottom: 20px;
+}
+
+.days-container {
+    display: flex;
+    justify-content: space-between; /* Assure que les jours sont bien répartis */
+}
+
+.month-header {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.day-headers {
+    display: flex;
+    justify-content: space-between; /* Assure que les jours de la semaine sont répartis de manière égale */
+}
+
+.day {
+    flex: 1;
+    padding: 10px 10px;
+    text-align: center;
+    cursor: pointer;
+
+    border: none ; /* Bordures légères pour chaque jour */
+}
+.selected-day {
+    background-color: ;
+    color: white;
+}
+
+    .selected-range {
+            background-color: rgb(169, 170, 255);
+        }
+
+.weekend {
+    background-color: rgb(169, 170, 255);
+}
+
+.calendar-navigation {
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+
+.calendar-navigation span {
+    font-size: 24px;
+    margin: 0 15px;
+}
+
+.disabled {
+    background-color: #f8f8f8;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn {
             padding: 5px 10px;
             cursor: pointer;
-            background-color: #007bff;
+            background-color: rgb(169, 170, 255);
             color: white;
             border: none;
             border-radius: 5px;
             margin-top: 10px;
-        }
-        .form-group {
-            margin-bottom: 10px;
         }
     </style>
 
@@ -63,46 +133,48 @@
     <button onclick="navigateCalendar(1)">&#x25BC;</button>
 </div>
 <div id="calendar"></div>
-<form action="{{ route('demandes.store') }}" method="POST" id="leaveRequestForm">
+<form action="{{ route('demandes.store') }}" method="POST" id="leaveRequestForm" class="p-4 bg-white shadow-lg rounded-lg">
     @csrf
-    <div class="form-group">
-        <label for="startDate">Date de début :</label>
-        <input type="date" id="startDate" name="DATE_DEBUT" readonly>
+    <div class="form-group mb-4">
+        <label for="startDate" class="form-label font-weight-bold">Date de début :</label>
+        <input type="date" class="form-control border-0 shadow-sm px-3" id="startDate" name="DATE_DEBUT" readonly>
     </div>
-    <div class="form-group">
-        <label for="endDate">Date de fin :</label>
-        <input type="date" id="endDate" name="DATE_FIN" readonly>
+    <div class="form-group mb-4">
+        <label for="endDate" class="form-label font-weight-bold">Date de fin :</label>
+        <input type="date" class="form-control border-0 shadow-sm px-3" id="endDate" name="DATE_FIN" readonly>
     </div>
-    <div class="form-group" id="yearSelection" style="display:none;">
-        <label for="year1">Année de congé 1 :</label>
-        <select class="form-control" id="year1" name="year1"></select>
+    <div class="form-group mb-4" id="yearSelection" style="display:none;">
+        <label for="year1" class="form-label font-weight-bold">Année de congé 1 :</label>
+        <select class="form-control border-0 shadow-sm px-3" id="year1" name="year1"></select>
     </div>
-    <div class="form-group" id="yearSelection2" style="display:none;">
-        <label for="year2">Année de congé 2 (optionnel) :</label>
-        <select class="form-control" id="year2" name="year2"></select>
+    <div class="form-group mb-4" id="yearSelection2" style="display:none;">
+        <label for="year2" class="form-label font-weight-bold">Année de congé 2 (optionnel) :</label>
+        <select class="form-control border-0 shadow-sm px-3" id="year2" name="year2" disabled></select>
     </div>
-    <div class="form-group">
-        <label for="TITRE">Titre</label>
-        <input type="text" class="form-control" id="TITRE" name="TITRE">
+    <div class="form-group mb-4">
+        <label for="TITRE" class="form-label font-weight-bold">Titre :</label>
+        <input type="text" class="form-control border-0 shadow-sm px-3" id="TITRE" name="TITRE">
     </div>
-    <div class="form-group">
-        <label for="TYPE_ID">Type</label>
-        <select class="form-control" id="TYPE_ID" name="TYPE_ID">
+    <div class="form-group mb-4">
+        <label for="TYPE_ID" class="form-label font-weight-bold">Type :</label>
+        <select class="form-control border-0 shadow-sm px-3" id="TYPE_ID" name="TYPE_ID">
             @foreach($types as $type)
                 <option value="{{ $type->ID }}">{{ $type->NOM }}</option>
             @endforeach
         </select>
     </div>
-    <div class="form-group">
-        <label for="EMPLOYE_REMPLACEMENT_ID">Employe remplacant</label>
-        <select class="form-control" id="EMPLOYE_REMPLACEMENT_ID" name="EMPLOYE_REMPLACEMENT_ID">
+    <div class="form-group mb-4">
+        <label for="EMPLOYE_REMPLACEMENT_ID" class="form-label font-weight-bold">Employe remplaçant :</label>
+        <select class="form-control border-0 shadow-sm px-3" id="EMPLOYE_REMPLACEMENT_ID" name="EMPLOYE_REMPLACEMENT_ID">
             @foreach($employes as $employe)
                 <option value="{{ $employe->MATRICULE }}">{{ $employe->NOM }}</option>
             @endforeach
         </select>
     </div>
-    <button type="submit" class="btn">Envoyer la demande</button>
+    <button type="submit" class="btn btn-primary btn-block shadow-sm">Envoyer la demande</button>
 </form>
+
+
 </x-app-layout>
 
 <script>
@@ -111,6 +183,7 @@ let selectedStartDate = null;
 let selectedEndDate = null;
 let currentMonthOffset = 0;
 const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+const dayNames = ["D", "L", "M", "M", "J", "V", "S"];
 var droitConges = @json($droitConges);
 document.getElementById('year1').addEventListener('change', function() {
     updateYearOptions(this.value, document.getElementById('year2'));
@@ -118,40 +191,91 @@ document.getElementById('year1').addEventListener('change', function() {
 });
 
 document.getElementById('endDate').addEventListener('change', toggleYear2Availability);
-
 function createCalendar() {
+    // Nettoyage du contenu actuel de l'élément du calendrier
     calendarEl.innerHTML = '';
+
+    // Création de l'en-tête avec les numéros des jours pour tous les mois
+    const dayNumbersHeader = document.createElement('div');
+    dayNumbersHeader.className = 'day-numbers-header';
+    for (let day = 1; day <= 31; day++) {
+        const dayNumberDiv = document.createElement('div');
+        dayNumberDiv.className = 'day-number';
+        dayNumberDiv.textContent = day;
+        dayNumbersHeader.appendChild(dayNumberDiv);
+    }
+    calendarEl.appendChild(dayNumbersHeader);
+
+    // Obtention de la date d'aujourd'hui sans les heures
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
+
+    // Configuration de la date minimale à 10 jours après aujourd'hui
+    const minDate = new Date(today.getTime());
+    minDate.setDate(minDate.getDate() + 10);
+
+    // Calcul du mois actuel et de l'année en fonction du décalage courant du mois
     const currentMonth = today.getMonth() + currentMonthOffset;
     const currentYear = today.getFullYear();
+
+    // Génération du calendrier pour les 4 mois suivants
     for (let i = 0; i < 4; i++) {
         let monthDate = new Date(currentYear, currentMonth + i, 1);
         let daysInMonth = new Date(currentYear, currentMonth + i + 1, 0).getDate();
+
+        // Création du container pour le mois
         let monthContainer = document.createElement('div');
         monthContainer.className = 'calendar-month';
+
+        // Ajout du label pour le mois
         let monthLabel = document.createElement('div');
         monthLabel.className = 'month-label';
         monthLabel.textContent = monthNames[monthDate.getMonth()] + ' ' + monthDate.getFullYear();
         monthContainer.appendChild(monthLabel);
+
+        // Création et remplissage des conteneurs pour les jours
         let daysContainer = document.createElement('div');
         daysContainer.className = 'days-container';
 
-        for (let day = 1; day <= daysInMonth; day++) {
+        // Génération des jours pour le mois courant
+        for (let day = 1; day <= 31; day++) {
             let dayEl = document.createElement('div');
             dayEl.className = 'day';
-            dayEl.textContent = day;
-            dayEl.dataset.date = `${monthDate.getFullYear()}-${('0' + (monthDate.getMonth() + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
-            dayEl.onclick = () => selectDate(new Date(currentYear, currentMonth + i, day), dayEl);
-            if ((new Date(currentYear, currentMonth + i, day).getDay() % 7 === 0) || (new Date(currentYear, currentMonth + i, day).getDay % 7 === 6)) {
+            let fullDate = new Date(currentYear, currentMonth + i, day);
+            // Affichage du jour de la semaine pour chaque jour
+            let dayNameDiv = document.createElement('div');
+            dayNameDiv.className = 'day-name';
+            dayNameDiv.textContent = dayNames[fullDate.getDay()];
+            dayEl.appendChild(dayNameDiv);
+
+            dayEl.dataset.date = `${fullDate.getFullYear()}-${('0' + (fullDate.getMonth() + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+
+            // Désactivation des jours avant la date minimale et gestion du clic
+            if (fullDate >= minDate ) {
+                dayEl.onclick = () => selectDate(fullDate, dayEl);
+            } else {
+                dayEl.classList.add('disabled');
+            }
+
+            // Mise en évidence des week-ends
+            if (fullDate.getDay() === 0 || fullDate.getDay() === 6) {
                 dayEl.classList.add('weekend');
             }
+
+            // Ajout du jour au container
             daysContainer.appendChild(dayEl);
         }
+
+        // Ajout du container des jours au container du mois
         monthContainer.appendChild(daysContainer);
+        // Ajout du container du mois à l'élément principal du calendrier
         calendarEl.appendChild(monthContainer);
     }
 }
+
+
+
+
 
 function selectDate(date, dayEl) {
     const minDate = new Date();
@@ -169,7 +293,7 @@ function selectDate(date, dayEl) {
     } else if (selectedStartDate && !selectedEndDate && date >= selectedStartDate) {
         selectedEndDate = date;
         if (!validateVacationLength()) {
-            alert('La durée du congé doit être entre 15 et 30 jours.');
+            alert('La durée du congé doit être 15 ou 30 jours.');
             selectedEndDate = null;
             updateFormFields();
             return;
@@ -235,7 +359,7 @@ function toggleYear2Availability() {
 function validateVacationLength() {
     if (selectedStartDate && selectedEndDate) {
         const diffDays = Math.round((selectedEndDate - selectedStartDate) / (1000 * 60 * 60 * 24)) + 1;
-        return diffDays >= 15 && diffDays <= 30;
+        return diffDays === 15 || diffDays === 30;
     }
     return false;
 }
@@ -287,7 +411,7 @@ function validateForm() {
         return false;
     }
     if (!validateVacationLength()) {
-        alert('La durée du congé doit être entre 15 et 30 jours.');
+        alert('La durée du congé doit être 15 ou 30 jours.');
         return false;
     }
     return true;

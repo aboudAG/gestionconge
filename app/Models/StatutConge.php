@@ -12,12 +12,12 @@ class StatutConge extends Model
     protected $table = 'statut_conge';
 
     protected $fillable = [
-        'ETAPE',
         'STATUT',
         'DEMANDE_CONGE_ID',
         'COMMENTAIRE',
         'APPROUVEUR_ID',
         'DATE_DECISION',
+        'ETAPE_ID',
     ];
 
     // Définition de la relation avec le modèle DemandeConge
@@ -25,4 +25,9 @@ class StatutConge extends Model
     {
         return $this->belongsTo(DemandeConge::class, 'DEMANDE_CONGE_ID', 'ID');
     }
+
+    public function etape()
+{
+    return $this->belongsTo(Etape::class, 'ETAPE_ID');
+}
 }

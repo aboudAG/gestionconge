@@ -54,7 +54,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @if ($demande->statuts->count() > 0)
-                                        {{ $demande->statuts->last()->ETAPE }}
+                                        {{ optional($demande->statuts->last()->etape)->NOM ?? 'Non spécifié' }}
                                     @endif
                                 </td>
                             </tr>
