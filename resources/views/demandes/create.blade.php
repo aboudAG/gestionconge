@@ -30,7 +30,39 @@
         .form-group {
             margin-bottom: 10px;
         } */
+        .alert {
+        border-radius: 0.4rem;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border: none;
+    }
 
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    /* Animation pour attirer l'attention sur les messages */
+    .alert {
+        animation: fadeIn 0.5s;
+    }
+
+    /* Keyframes pour l'animation fadeIn */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
         .calendar-container {
     width: 100%;
 }
@@ -84,7 +116,7 @@
 }
 
     .selected-range {
-            background-color: rgb(169, 170, 255);
+            background-color: rgb(147, 148, 239);
         }
 
 .weekend {
@@ -118,6 +150,22 @@
             margin-top: 10px;
         }
     </style>
+
+@if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
 @if ($droitConges)
 <h3>Votre crédit congés</h3>
@@ -157,11 +205,17 @@
     </div>
     <div class="form-group mb-4">
         <label for="TYPE_ID" class="form-label font-weight-bold">Type :</label>
-        <select class="form-control border-0 shadow-sm px-3" id="TYPE_ID" name="TYPE_ID">
+        <select class="form-control border-0 shadow-sm px-3" id="TYPE_ID" name="TYPE_ID" onchange="handleTypeChange()">
             @foreach($types as $type)
                 <option value="{{ $type->ID }}">{{ $type->NOM }}</option>
             @endforeach
         </select>
+
+    </div>
+
+    <div class="form-group mb-4" id="justificatifContainer" style="display: none;">
+        <label for="justificatif" class="form-label font-weight-bold">Justificatif (en cas de maladie) :</label>
+        <input type="file" class="form-control border-0 shadow-sm px-3" id="justificatif" name="justificatif" accept=".pdf, .png">
     </div>
     <div class="form-group mb-4">
         <label for="EMPLOYE_REMPLACEMENT_ID" class="form-label font-weight-bold">Employe remplaçant :</label>
@@ -191,6 +245,21 @@ document.getElementById('year1').addEventListener('change', function() {
 });
 
 document.getElementById('endDate').addEventListener('change', toggleYear2Availability);
+
+
+function handleTypeChange() {
+    var typeSelect = document.getElementById('TYPE_ID');
+    var justificatifContainer = document.getElementById('justificatifContainer');
+    var selectedType = typeSelect.options[typeSelect.selectedIndex].text; // Utilisation du texte; ajustez si nécessaire.
+
+    // Affiche le champ de téléchargement si le type sélectionné est 'Maladie'
+    if (selectedType === 'Maladie') {
+        justificatifContainer.style.display = 'block';
+    } else {
+        justificatifContainer.style.display = 'none';
+    }
+}
+
 function createCalendar() {
     // Nettoyage du contenu actuel de l'élément du calendrier
     calendarEl.innerHTML = '';
@@ -242,6 +311,7 @@ function createCalendar() {
             let dayEl = document.createElement('div');
             dayEl.className = 'day';
             let fullDate = new Date(currentYear, currentMonth + i, day);
+
             // Affichage du jour de la semaine pour chaque jour
             let dayNameDiv = document.createElement('div');
             dayNameDiv.className = 'day-name';
@@ -251,7 +321,7 @@ function createCalendar() {
             dayEl.dataset.date = `${fullDate.getFullYear()}-${('0' + (fullDate.getMonth() + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
 
             // Désactivation des jours avant la date minimale et gestion du clic
-            if (fullDate >= minDate ) {
+            if (fullDate >= minDate && day <= daysInMonth) {
                 dayEl.onclick = () => selectDate(fullDate, dayEl);
             } else {
                 dayEl.classList.add('disabled');
@@ -260,6 +330,11 @@ function createCalendar() {
             // Mise en évidence des week-ends
             if (fullDate.getDay() === 0 || fullDate.getDay() === 6) {
                 dayEl.classList.add('weekend');
+            }
+
+            // Désactiver les jours qui ne sont pas dans le mois actuel
+            if (day > daysInMonth) {
+                dayEl.style.visibility = 'hidden'; // Cache le jour sans affecter la mise en page
             }
 
             // Ajout du jour au container
@@ -277,9 +352,29 @@ function createCalendar() {
 
 
 
+function setupCalendarListeners() {
+    // Ajouter un écouteur d'événements sur le calendrier entier
+    calendarEl.addEventListener('click', function(event) {
+        // Vérifier si l'élément cliqué est un jour du calendrier
+        if ( !event.target.classList.contains('day-name')) {
+            // Si le clic n'est pas sur un jour, annuler la sélection actuelle
+            clearSelection();
+            hideYearSelection();
+        }
+    });
+}
+
 function selectDate(date, dayEl) {
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 9);
+
+    if (selectedStartDate && date.getTime() === selectedStartDate.getTime()) {
+        // Si l'utilisateur clique à nouveau sur la date de début sélectionnée, annuler la sélection
+        clearSelection();
+        hideYearSelection();
+        return;
+    }
+
     if (!selectedStartDate || date < selectedStartDate || (selectedStartDate && selectedEndDate)) {
         if (date < minDate) {
             alert('La date de début doit être au moins 10 jours après aujourd\'hui.');
@@ -303,6 +398,7 @@ function selectDate(date, dayEl) {
         showYearSelection();
     }
 }
+
 
 function showYearSelection() {
     // Afficher les sélections d'année lorsque les deux dates sont sélectionnées
@@ -370,8 +466,22 @@ function updateFormFields() {
 }
 
 function clearSelection() {
-    document.querySelectorAll('.day').forEach(dayEl => dayEl.classList.remove('selected-range'));
+    selectedStartDate = null;
+    selectedEndDate = null;
+    document.querySelectorAll('.day').forEach(dayEl => {
+        dayEl.classList.remove('selected-range');
+    });
+    updateFormFields();
+    hideYearSelection();
 }
+
+function hideYearSelection() {
+    document.getElementById('yearSelection').style.display = 'none';
+    document.getElementById('yearSelection2').style.display = 'none';
+}
+
+
+
 
 function highlightRange() {
     document.querySelectorAll('.day').forEach(dayEl => {
@@ -419,4 +529,5 @@ function validateForm() {
 
 // Initialize the calendar
 createCalendar();
+setupCalendarListeners();
 </script>

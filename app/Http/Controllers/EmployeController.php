@@ -126,10 +126,12 @@ public function destroy($ID)
         // Trouve l'employé et l'utilisateur associé dans la base de données
         $employe = Employe::findOrFail($ID);
         $user = User::where('MATRICULE', $employe->MATRICULE)->firstOrFail();
-        $droitConge = DroitConge::where('EMPLOYE_ID', $employe->MATRICULE)->firstOrFail();
+        $droitConge = DroitConge::where('EMPLOYE_ID', $employe->MATRICULE)->first();
         // Supprime l'utilisateur associé
         $user->delete();
-        $droitConge->delete();
+        if ($droitConge) {
+            $droitConge->delete();
+        }
 
         // Supprime ensuite l'employé
         $employe->delete();

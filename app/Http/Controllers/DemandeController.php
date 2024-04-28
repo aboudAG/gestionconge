@@ -19,8 +19,8 @@ use Exception;
 class DemandeController extends Controller
 {
     public function create()
-    {
-           // Récupérer l'utilisateur connecté via l'authentification
+{
+    // Récupérer l'utilisateur connecté via l'authentification
     $user = Auth::user();
 
     // Assurez-vous que l'utilisateur est bien un employé et qu'il a un matricule associé
@@ -30,25 +30,28 @@ class DemandeController extends Controller
 
     // Récupérer l'employé à partir de son matricule
     $employe = Employe::with('droitConges')->find($user->MATRICULE);
-    // dd($employe = Employe::find($user->MATRICULE));
-    // $droitConge = $employe->droitConges ?? null;
 
-    // S'assurer que l'employé existe
-    if (!$employe) {
-        return redirect()->route('login')->withErrors('Employé non trouvé.');
+    // S'assurer que l'employé existe et a une structure associée
+    if (!$employe || !$employe->STRUCTURE_ID) {
+        return redirect()->route('login')->withErrors('Employé non trouvé ou structure non assignée.');
     }
 
+    // Récupérer les employés qui sont dans la même structure que l'employé connecté
+    $employes = Employe::where('STRUCTURE_ID', $employe->STRUCTURE_ID)
+                            ->where('MATRICULE', '!=', $user->MATRICULE)
+                            ->get();
+
     // Récupérer les types de congé disponibles
-    $employes = Employe::all();
     $types = Type::all(); // Assurez-vous que le modèle Type et la table sont correctement configurés
 
     // Passer les données à la vue
     return view('demandes.create', [
         'types' => $types,
-        'employes' => $employes, // vous pouvez choisir de passer l'employé entier
-        'droitConges' => $employe->droitConges // passer les droits de congé associés à l'employé
+        'employes' => $employes, // Liste des employés de la même structure que l'utilisateur connecté
+        'droitConges' => $employe->droitConges // Passer les droits de congé associés à l'employé
     ]);
-    }
+}
+
 
 
 

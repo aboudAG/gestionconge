@@ -28,6 +28,6 @@ class StatutConge extends Model
 
     public function etape()
 {
-    return $this->belongsTo(Etape::class, 'ETAPE_ID');
+    return $this->belongsTo(Etape::class, 'ETAPE_ID', 'ID');
 }
 }
