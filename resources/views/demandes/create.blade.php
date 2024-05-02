@@ -4,6 +4,9 @@
             {{ __('Demande de Congé') }}
         </h2>
     </x-slot>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
     <style>
         /* .calendar-navigation {
             text-align: center;
@@ -185,7 +188,7 @@
     @csrf
     <div class="form-group mb-4">
         <label for="startDate" class="form-label font-weight-bold">Date de début :</label>
-        <input type="date" class="form-control border-0 shadow-sm px-3" id="startDate" name="DATE_DEBUT" readonly>
+        <input type="date" class="form-control shadow-sm" id="startDate" name="DATE_DEBUT" readonly>
     </div>
     <div class="form-group mb-4">
         <label for="endDate" class="form-label font-weight-bold">Date de fin :</label>
@@ -310,15 +313,16 @@ function createCalendar() {
         for (let day = 1; day <= 31; day++) {
             let dayEl = document.createElement('div');
             dayEl.className = 'day';
-            let fullDate = new Date(currentYear, currentMonth + i, day);
+            let fullDate = new Date(Date.UTC(currentYear, currentMonth + i, day));
+
 
             // Affichage du jour de la semaine pour chaque jour
             let dayNameDiv = document.createElement('div');
             dayNameDiv.className = 'day-name';
-            dayNameDiv.textContent = dayNames[fullDate.getDay()];
+            dayNameDiv.textContent = dayNames[fullDate.getUTCDay()];;
             dayEl.appendChild(dayNameDiv);
 
-            dayEl.dataset.date = `${fullDate.getFullYear()}-${('0' + (fullDate.getMonth() + 1)).slice(-2)}-${('0' + day).slice(-2)}`;
+            dayEl.dataset.date = `${fullDate.getUTCFullYear()}-${('0' + (fullDate.getUTCMonth() + 1)).slice(-2)}-${('0' + fullDate.getUTCDate()).slice(-2)}`;
 
             // Désactivation des jours avant la date minimale et gestion du clic
             if (fullDate >= minDate && day <= daysInMonth) {
@@ -328,7 +332,7 @@ function createCalendar() {
             }
 
             // Mise en évidence des week-ends
-            if (fullDate.getDay() === 0 || fullDate.getDay() === 6) {
+            if (fullDate.getDay() === 5 || fullDate.getDay() === 6) {
                 dayEl.classList.add('weekend');
             }
 
@@ -530,4 +534,13 @@ function validateForm() {
 // Initialize the calendar
 createCalendar();
 setupCalendarListeners();
+
+//choisejs
+document.addEventListener('DOMContentLoaded', function() {
+    var replacementSelect = new Choices('#EMPLOYE_REMPLACEMENT_ID', {
+        searchEnabled: true,
+        itemSelectText: '',
+        shouldSort: false
+    });
+});
 </script>
