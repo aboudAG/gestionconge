@@ -27,14 +27,26 @@ class StructureController extends Controller
         $validatedData = $request->validate([
             'CODE' => 'required|unique:structures,code',
             'NOM' => 'required|max:255',
-             'TYPE' => 'required',
-            // 'parent_id' pourrait être nullable ou avoir une validation spécifique si c'est une clé étrangère
+            'TYPE' => 'required',
+            'PARENT_ID' => 'nullable|exists:structures,id', // Ensure PARENT_ID exists in the database if provided
         ]);
-
+    
+        // Create the structure without chemin first
         $structure = Structure::create($validatedData);
+    
+        // Determine the chemin based on the parent (if there's a parent)
+        $parentChemin = '';
+        if (isset($validatedData['PARENT_ID'])) {
+            $parentStructure = Structure::find($validatedData['PARENT_ID']);
+            $parentChemin = $parentStructure->CHEMIN ?? '';
+        }
+    
+        // Update chemin with its own ID appended to parent's chemin
+        $structure->CHEMIN = trim($parentChemin . $structure->id, '/');
+        $structure->save();
+    
         return redirect()->route('structures.index')->with('success', 'Structure ajoutée avec succès.');
     }
-
     /**
  * Show the form for editing the specified role.
  *

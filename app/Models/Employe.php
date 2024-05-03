@@ -28,7 +28,7 @@ class Employe extends Model
 
     public function structure()
     {
-        return $this->belongsTo(Structure::class, 'STRUCTURE_ID');
+        return $this->belongsTo(Structure::class, 'STRUCTURE_ID','ID');
     }
 
     public function role()

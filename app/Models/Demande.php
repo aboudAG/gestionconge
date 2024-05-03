@@ -41,4 +41,20 @@ class Demande extends Model
     {
         return $this->hasMany(Etape::class, 'DEMANDE_CONGE_ID', 'ID');
     }
+
+
+    public function currentEtape()
+    {
+        $statutEnAttente = $this->statuts()
+                        ->where('STATUT', 'En Attente')
+                        ->first();
+
+        if ($statutEnAttente) {
+            return Etape::find($statutEnAttente->ETAPE_ID);
+        }
+
+        return null;
+    }
 }
+
+
