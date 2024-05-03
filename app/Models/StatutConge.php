@@ -23,7 +23,7 @@ class StatutConge extends Model
     // Définition de la relation avec le modèle DemandeConge
     public function demandeConge()
     {
-        return $this->belongsTo(DemandeConge::class, 'DEMANDE_CONGE_ID', 'ID');
+        return $this->belongsTo(Demande::class, 'DEMANDE_CONGE_ID', 'ID');
     }
 
     public function etape()
