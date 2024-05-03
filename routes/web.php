@@ -8,6 +8,7 @@ use App\Http\Controllers\TypeController;
 use App\Http\Controllers\DemandeController;
 use App\Http\Controllers\StatutCongeController;
 use App\Http\Controllers\DemandeCongeListeController;
+use App\Http\Controllers\DemandeCongeDecisionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,5 +76,5 @@ Route::post('/demandes', [DemandeController::class, 'store'])->name('demandes.st
 Route::get('/statutsconges', [StatutCongeController::class, 'index'])->name('statutsconges.index');
 
 Route::get('/listedemandes', [DemandeCongeListeController::class, 'index'])->name('listedemandes.index');
-//Route::get('/demandes/{id}', [DemandeCongeController::class, 'show'])->name('demandes.show');
-//Route::post('/demandes/decide/{id}', [DemandeCongeController::class, 'decide'])->name('demandes.decide');
+Route::get('/demande/{id}', [DemandeCongeDecisionController::class, 'show'])->name('demandes.show');
+Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'decide'])->name('demandes.decide');

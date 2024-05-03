@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Liste des Demandes de Congés</title>
-</head>
-<body>
-    @if(isset($demandes))
-    <h1>Demandes de Congés </h1>
-    @include('listedemandes.table', ['demandes' => $demandes])
+<x-app-layout>
+    <x-slot name="header">
+        <h2>{{ __('Demandes de Congés') }}</h2>
+    </x-slot>
+
+    <!-- Content here -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
     @endif
 
-</body>
-</html>
+    @if(isset($demandes))
+        <h1>Demandes de Congés</h1>
+        @include('listedemandes.table', ['demandes' => $demandes])
+    @endif
+</x-app-layout>

@@ -55,6 +55,19 @@ class Demande extends Model
 
         return null;
     }
-}
+
+   
+        public function getNextEtape($currentEtape) {
+            $progression = [
+                'Service' => 'Departement',
+                'Departement' => 'Direction',
+                'Direction' => 'RH',
+                
+            ];
+    
+            return $progression[$currentEtape] ?? null;
+        }
+    }
+
 
 

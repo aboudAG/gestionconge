@@ -11,12 +11,12 @@
     
     <!-- Show blade for displaying demande details -->
 <form action="{{ route('demandes.decide', $demande->ID) }}" method="POST">
-    @csrf
+    @csrf 
     <div>
         <label for="comment">Commentaire:</label>
         <textarea id="comment" name="comment"></textarea>
     </div>
-    <button type="submit" name="decision" value="Accepter">Approuver</button>
+    <button type="submit" name="decision" value="Accepter"> Approuver</button>
     <button type="submit" name="decision" value="Refuser">Refuser</button>
 </form>
 </body>
