@@ -21,8 +21,11 @@ class EmployeController extends Controller
     public function index()
     {
         $employes = Employe::all();
+        $structures = Structure::all();
+        $roles = Role::all();
 
-        return view('employes.index', ['employes' => $employes ]);
+
+        return view('employes.index', ['employes' => $employes,'structures' => $structures , 'roles' => $roles ]);
     }
 
     public function create()
