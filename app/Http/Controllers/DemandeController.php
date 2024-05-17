@@ -10,7 +10,9 @@ use App\Models\Type;
 use App\Models\Etape;
 use App\Models\Employe;
 use App\Models\Demande;
+Use App\Models\Exercice;
 use App\Models\StatutConge;
+use App\Models\DroitConge;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -62,7 +64,8 @@ class DemandeController extends Controller
             'TITRE' => 'required|string|max:50', // Titre de la demande
             'DATE_DEBUT' => 'required|date|before:DATE_FIN', // Date de début doit être avant ou égale à la date de fin
             'DATE_FIN' => 'required|date|after:DATE_DEBUT', // Date de fin doit être après ou égale à la date de début
-            'EMPLOYE_REMPLACEMENT_ID' => 'nullable', // ID de l'employé de remplacement, nullable si aucun remplacement n'est prévu
+            'EMPLOYE_REMPLACEMENT_ID' => 'nullable',
+            'year1' => 'required|exists:droit_au_conges,ANNEE', // ID de l'employé de remplacement, nullable si aucun remplacement n'est prévu
         ]);
 
         // Récupérer l'employé connecté
@@ -89,7 +92,7 @@ class DemandeController extends Controller
             // Commencer une transaction de base de données
             DB::beginTransaction();
 
-             try {
+            //  try {
                 // Créer une nouvelle demande avec l'ID de l'employé récupéré
                 $demande = Demande::create([
                     'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
@@ -112,17 +115,32 @@ class DemandeController extends Controller
                     'ETAPE_ID' => $etape->ID, // Utiliser la date actuelle pour la date de décision
                 ]);
 
+                $droit = DroitConge::where('ANNEE', $request->year1)->first();
 
+                $exercice = Exercice::create([
+                    'DEMANDE_CONGE_ID' => $demande->id,
+                    'DROIT_AU_CONGE_ID' => $droit->ID,
+                ]);
+
+                $droit = DroitConge::where('ANNEE', $request->year2)->first();
+
+
+                if($droit){
+                    $exercice = Exercice::create([
+                        'DEMANDE_CONGE_ID' => $demande->id,
+                        'DROIT_AU_CONGE_ID' => $droit->ID,
+                    ]);
+                }
 
                 // Valider la transaction de base de données
                 DB::commit();
 
                 return redirect()->route('statutsconges.index')->with('success', 'La demande de congé a été enregistrée avec succès.');
-            } catch (Exception $e) {
-                 // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
-                 DB::rollBack();
-                 return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
-             }
+            // } catch (Exception $e) {
+            //      // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
+            //      DB::rollBack();
+            //      return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
+            //  }
         } else {
             // Gérer le cas où l'employé n'est pas trouvé
             return redirect()->intended('login');

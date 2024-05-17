@@ -6,6 +6,7 @@ use App\Models\Structure;
 use App\Models\Employe;
 use App\Models\User;
 use App\Models\DroitConge;
+use App\Models\Demande;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
@@ -20,7 +21,18 @@ class EmployeController extends Controller
 {
     public function index()
     {
-        $employes = Employe::all();
+        $user = Auth::user();
+        if (!$user || !$user->MATRICULE) {
+            return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
+        }
+        $employe = Employe::where('MATRICULE', $user->MATRICULE)->firstOrFail();
+        if($employe->role->NOM == 'Employe'){
+            return redirect()->route('demandes.create')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
+        $employes = Employe::where('STRUCTURE_ID', $employe->STRUCTURE_ID)
+                    ->get();
+        // $employes = Employe::all();
         $structures = Structure::all();
         $roles = Role::all();
 
@@ -128,10 +140,17 @@ public function destroy($ID)
     DB::transaction(function () use ($ID) {
         // Trouve l'employé et l'utilisateur associé dans la base de données
         $employe = Employe::findOrFail($ID);
-        $user = User::where('MATRICULE', $employe->MATRICULE)->firstOrFail();
+        $user = User::where('MATRICULE', $employe->MATRICULE)->first();
         $droitConge = DroitConge::where('EMPLOYE_ID', $employe->MATRICULE)->first();
+        $demandeconge = Demande::where('EMPLOYE_ID',$employe->MATRICULE)->first();
         // Supprime l'utilisateur associé
-        $user->delete();
+        if($demandeconge){
+            $demandeconge->delete();
+        }
+        if($user){
+            $user->delete();
+        }
+
         if ($droitConge) {
             $droitConge->delete();
         }

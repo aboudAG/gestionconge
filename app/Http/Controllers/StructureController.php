@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Structure;
+use App\Models\Employe;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class StructureController extends Controller
@@ -10,6 +13,14 @@ class StructureController extends Controller
     // Affiche la liste des structures
     public function index()
     {
+        $user = Auth::user();
+        if (!$user || !$user->MATRICULE) {
+            return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
+        }
+        $employe = Employe::where('MATRICULE', $user->MATRICULE)->firstOrFail();
+        if($employe->role->NOM == 'Employe'){
+            return redirect()->route('demandes.create')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
         $structures = Structure::all();
 
         return view('structures.index', compact('structures'));
@@ -30,21 +41,21 @@ class StructureController extends Controller
             'TYPE' => 'required',
             'PARENT_ID' => 'nullable|exists:structures,id', // Ensure PARENT_ID exists in the database if provided
         ]);
-    
+
         // Create the structure without chemin first
         $structure = Structure::create($validatedData);
-    
+
         // Determine the chemin based on the parent (if there's a parent)
         $parentChemin = '';
         if (isset($validatedData['PARENT_ID'])) {
             $parentStructure = Structure::find($validatedData['PARENT_ID']);
             $parentChemin = $parentStructure->CHEMIN ?? '';
         }
-    
+
         // Update chemin with its own ID appended to parent's chemin
         $structure->CHEMIN = trim($parentChemin . $structure->id, '/');
         $structure->save();
-    
+
         return redirect()->route('structures.index')->with('success', 'Structure ajoutée avec succès.');
     }
     /**

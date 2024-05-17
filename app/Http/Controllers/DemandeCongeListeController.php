@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Models\Employe;
 class DemandeCongeListeController extends Controller
 {
-    
+
 
     public function index()
     {
@@ -24,29 +24,29 @@ class DemandeCongeListeController extends Controller
 
     $demandes = [];
 
-  
+
 */
         $user = Auth::user();
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
-    
+
         // Récupérer l'employé à partir de son matricule
         $employe = Employe::find($user->MATRICULE);
-        
-    
+
+
         // S'assurer que l'employé existe et a une structure associée
         if (!$employe || !$employe->STRUCTURE_ID) {
             return redirect()->route('login')->withErrors('Employé non trouvé ou structure non assignée.');
         }
-    
+
         $EMPLOYESTRUCTURE=$employe->STRUCTURE_ID;
         $role = $employe->role->NOM;
 
         $chefStructureId = $employe->STRUCTURE_ID;
         $chefStructure = Structure::find($chefStructureId);
 
-        
+
         $directeurStructureId = $employe->STRUCTURE_ID; // ID de la structure dirigée par le directeur
         $directeurStructure = Structure::find($directeurStructureId);
 
@@ -62,13 +62,13 @@ class DemandeCongeListeController extends Controller
                     });
                 })
                 ->get();
-            
+
             // Now, filter these demandes to check the current etape using the loaded data.
             $demandes = $demandesservice->filter(function ($demande) {
                 $currentEtape = $demande->currentEtape();
                 return $currentEtape && $currentEtape->NOM === 'Service';
             });
-            
+
                 break;
 
 
@@ -84,14 +84,14 @@ class DemandeCongeListeController extends Controller
                             });
                         })
                         ->get();
-                
+
                     // Filter demandes based on the current etape using the loaded data
                     $demandes = $demandesdepartement->filter(function ($demande) {
                         $currentEtape = $demande->currentEtape();
                         return $currentEtape && $currentEtape->NOM === 'Departement';
                     });
                 }
-                
+
                 break;
 
 
@@ -107,7 +107,7 @@ class DemandeCongeListeController extends Controller
                             });
                         })
                         ->get();
-                
+
                     // Filter the demandes based on the current etape
                     $demandes = $demandesdirecteur->filter(function ($demande) {
                         $currentEtape = $demande->currentEtape();
@@ -121,29 +121,27 @@ class DemandeCongeListeController extends Controller
             case 'RH':
                 $demandesrh = Demande::with(['employe.structure'])
                 ->get();
-            
+
             // Filter these demandes to check the current etape using the loaded data.
                 $demandes = $demandesrh->filter(function ($demande) {
                 $currentEtape = $demande->currentEtape();
-                return $currentEtape && $currentEtape->NOM === 'RH';
+                return $currentEtape && $currentEtape->NOM === 'Rh';
             });
                 break;
-       
+
 
 
         case 'Employe' :
-            
-            return redirect()->route('dashboard')->withErrors('Employé non trouvé ou structure non assignée.');
-            
+
+            return redirect()->route('demandes.create')->withErrors('Vous ne pouvez pas acceder a cette page. ');
+
         }
 
 
 
 
-
-        
         return view('listedemandes.index', [
-    'demandes' => $demandes
+    'demandes' => $demandes,
 ]);
     }
 

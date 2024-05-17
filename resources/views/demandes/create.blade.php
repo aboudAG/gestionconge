@@ -1,8 +1,8 @@
 <x-app-layout>
-   
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* .calendar-navigation {
             text-align: center;
@@ -114,14 +114,19 @@
     color: white;
 }
 
-    .selected-range {
-            background-color: rgb(147, 148, 239);
-        }
+
+
 
 .weekend {
-    background-color: rgb(169, 170, 255);
+    background-color: gray ;
+    color: white;
 }
 
+.selected-range {
+            background-color: rgb(238, 255, 56);
+            color: black ;
+        }
+/* rgb(169, 170, 255) */
 .calendar-navigation {
     text-align: center;
     user-select: none;
@@ -142,14 +147,22 @@
 .btn {
             padding: 5px 10px;
             cursor: pointer;
-            background-color: rgb(169, 170, 255);
+            background-color: gray;
             color: white;
             border: none;
             border-radius: 5px;
             margin-top: 10px;
         }
-    </style>
 
+.btn:hover{
+    background-color: rgb(202, 201, 201);
+}
+    </style>
+<x-slot name="header">
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __(' Demande de congé') }}
+    </h2>
+</x-slot>
 @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -166,14 +179,18 @@
         </div>
     @endif
 
-@if ($droitConges)
+{{-- @if ($droitConges)
 <h3>Votre crédit congés</h3>
 <ul>
     @foreach ($droitConges as $droit)
         <li>{{ $droit->ANNEE }}: {{ $droit->JOURS_RESTANT }} jours restants</li>
     @endforeach
 </ul>
-@endif
+@endif --}}
+
+<button type="button" class="btn btn-black" data-bs-toggle="modal" data-bs-target="#modalConges" style="width: 100%; height: 50px;">
+    Voir mon crédit congés
+  </button>
 
 <div class="calendar-navigation">
     <button onclick="navigateCalendar(-1)">&#x25B2;</button>
@@ -199,8 +216,8 @@
         <select class="form-control border-0 shadow-sm px-3" id="year2" name="year2" disabled></select>
     </div>
     <div class="form-group mb-4">
-        <label for="TITRE" class="form-label font-weight-bold">Titre :</label>
-        <input type="text" class="form-control border-0 shadow-sm px-3" id="TITRE" name="TITRE">
+        <label for="TITRE" class="form-label font-weight-bold" >Titre :</label>
+        <input type="text" class="form-control border-0 shadow-sm px-3" id="TITRE" name="TITRE" placeholder="Entrez un titre">
     </div>
     <div class="form-group mb-4">
         <label for="TYPE_ID" class="form-label font-weight-bold">Type :</label>
@@ -213,7 +230,7 @@
     </div>
 
     <div class="form-group mb-4" id="justificatifContainer" style="display: none;">
-        <label for="justificatif" class="form-label font-weight-bold">Justificatif (en cas de maladie) :</label>
+        <label for="justificatif" class="form-label font-weight-bold">Justificatif :</label>
         <input type="file" class="form-control border-0 shadow-sm px-3" id="justificatif" name="justificatif" accept=".pdf, .png">
     </div>
     <div class="form-group mb-4">
@@ -227,6 +244,28 @@
     <button type="submit" class="btn btn-primary btn-block shadow-sm">Envoyer la demande</button>
 </form>
 
+{{-- modal --}}
+<div class="modal fade" id="modalConges" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalLabel">Votre crédit congés</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          @if ($droitConges)
+          <ul>
+            @foreach ($droitConges as $droit)
+              <li>{{ $droit->ANNEE }}: {{ $droit->JOURS_RESTANT }} jours restants</li>
+            @endforeach
+          </ul>
+          @endif
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </x-app-layout>
 
@@ -248,14 +287,24 @@ document.getElementById('endDate').addEventListener('change', toggleYear2Availab
 
 function handleTypeChange() {
     var typeSelect = document.getElementById('TYPE_ID');
+    var year1 = document.getElementById('yearSelection');
+    var year2 = document.getElementById('yearSelection2');
     var justificatifContainer = document.getElementById('justificatifContainer');
     var selectedType = typeSelect.options[typeSelect.selectedIndex].text; // Utilisation du texte; ajustez si nécessaire.
 
     // Affiche le champ de téléchargement si le type sélectionné est 'Maladie'
-    if (selectedType === 'Maladie') {
+    if (selectedType === 'Maladie' || selectedType === 'Maternelle' || selectedType === 'Sans Solde') {
         justificatifContainer.style.display = 'block';
     } else {
         justificatifContainer.style.display = 'none';
+    }
+
+    if(selectedType === 'Sans Solde'){
+        year1.style.display = 'none';
+        year2.style.display = 'none';
+    }else{
+        year1.style.display = 'block';
+        year2.style.display = 'block';
     }
 }
 
@@ -387,12 +436,12 @@ function selectDate(date, dayEl) {
         updateFormFields();
     } else if (selectedStartDate && !selectedEndDate && date >= selectedStartDate) {
         selectedEndDate = date;
-        if (!validateVacationLength()) {
-            alert('La durée du congé doit être 15 ou 30 jours.');
-            selectedEndDate = null;
-            updateFormFields();
-            return;
-        }
+        // if (!validateVacationLength()) {
+        //     alert('La durée du congé doit être 15 ou 30 jours.');
+        //     selectedEndDate = null;
+        //     updateFormFields();
+        //     return;
+        // }
         updateFormFields();
         highlightRange();
         showYearSelection();
@@ -452,13 +501,13 @@ function toggleYear2Availability() {
 }
 
 
-function validateVacationLength() {
-    if (selectedStartDate && selectedEndDate) {
-        const diffDays = Math.round((selectedEndDate - selectedStartDate) / (1000 * 60 * 60 * 24)) + 1;
-        return diffDays === 15 || diffDays === 30;
-    }
-    return false;
-}
+// function validateVacationLength() {
+//     if (selectedStartDate && selectedEndDate) {
+//         const diffDays = Math.round((selectedEndDate - selectedStartDate) / (1000 * 60 * 60 * 24)) + 1;
+//         return diffDays === 15 || diffDays === 30;
+//     }
+//     return false;
+// }
 
 function updateFormFields() {
     document.getElementById('startDate').value = selectedStartDate ? selectedStartDate.toISOString().split('T')[0] : '';
@@ -520,10 +569,10 @@ function validateForm() {
         alert('La date de fin doit être postérieure à la date de début.');
         return false;
     }
-    if (!validateVacationLength()) {
-        alert('La durée du congé doit être 15 ou 30 jours.');
-        return false;
-    }
+    // if (!validateVacationLength()) {
+    //     alert('La durée du congé doit être 15 ou 30 jours.');
+    //     return false;
+    // }
     return true;
 }
 

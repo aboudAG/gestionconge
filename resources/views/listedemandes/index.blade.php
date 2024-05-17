@@ -11,7 +11,7 @@
     @endif
 
     @if(isset($demandes))
-        <h1>Demandes de Congés</h1>
+
         @include('listedemandes.table', ['demandes' => $demandes])
     @endif
 </x-app-layout>

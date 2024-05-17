@@ -1,12 +1,5 @@
 
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-        <title>Document</title>
         <style>
              .alert {
         border-radius: 0.4rem;
@@ -42,8 +35,14 @@
         }
     }
         </style>
-    </head>
-    <body>
+    <x-app-layout>
+        <x-slot name="header">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Roles') }}
+            </h2>
+        </x-slot>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -59,33 +58,37 @@
             {{ session('success') }}
         </div>
     @endif
-        <div class="container">
-            <h1>Liste des Rôles</h1>
-            <a href="{{ route('roles.create') }}" class="btn btn-success mb-3">Ajouter un nouveau rôle</a>
-            <table class="table table-bordered">
-                <thead>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class = "container">
+                        <h3 class="text-lg font-semibold mb-4">Liste des Roles</h3>
+                    </div>
+
+                    <table class="min-w-full divide-y divide-gray-200" id="table">
+                        <thead class="bg-gray-50">
+
                     <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                        {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> --}}
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($roles as $role)
                     <tr>
-                        <td>{{ $role->ID }} </td>
-                        <td>{{ $role->NOM }}</td>
-                        <td>
-                            {{-- Ici, ajoutez les liens pour modifier ou supprimer les rôles --}}
+                        <td class = " px-6 py-4 whitespace-nowrap">{{ $role->ID }} </td>
+                        <td class = " px-6 py-4 whitespace-nowrap">{{ $role->NOM }}</td>
+                        {{-- <td class = " px-6 py-4 whitespace-nowrap">
+                            {{-- Ici, ajoutez les liens pour modifier ou supprimer les rôles
                             <a href="{{ route('roles.edit', $role->ID) }}" class="btn btn-primary">Éditer</a>
-                            <a href="{{url('roles/'.$role->ID.'/delete')}}">supprimer</a>
+                            <a href="{{url('roles/'.$role->ID.'/delete')}}">supprimer</a> </td> --}}
                     </tr>
                     @endforeach
                 </tbody>
         </table>
 
         </div>
-    </body>
-    </html>
-
+    </x-app-layout>
 

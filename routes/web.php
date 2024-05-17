@@ -76,5 +76,5 @@ Route::post('/demandes', [DemandeController::class, 'store'])->name('demandes.st
 Route::get('/statutsconges', [StatutCongeController::class, 'index'])->name('statutsconges.index');
 
 Route::get('/listedemandes', [DemandeCongeListeController::class, 'index'])->name('listedemandes.index');
-Route::get('/demande/{id}', [DemandeCongeDecisionController::class, 'show'])->name('demandes.show');
+Route::get('/demande/{id}', [DemandeCongeDecisionController::class, 'show'])->name('decisiondemande.show');
 Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'decide'])->name('demandes.decide');

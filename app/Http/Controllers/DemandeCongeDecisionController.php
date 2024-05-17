@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Employe;
 use App\Models\Etape;
+use App\Models\Exercice;
+use App\Models\DroitConge;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 class DemandeCongeDecisionController extends Controller
 {
@@ -19,7 +22,7 @@ public function show($id)
     {
         $demande = Demande::with(['employe.structure', 'statuts'])
                         ->findOrFail($id);
-    
+
         return view('decisiondemande.show', compact('demande'));
     }
 
@@ -65,7 +68,45 @@ public function show($id)
                         ]);
                     }
                 }
+                else{
+                    $dateDebut = Carbon::parse($demande->DATE_DEBUT);
+                    $dateFin = Carbon::parse($demande->DATE_FIN);
+                    $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
+                    $exercices = Exercice::where('DEMANDE_CONGE_ID', $demande->ID)->orderBy('ID')->get();
+                    $nombreExercices = $exercices->count();
+                    if ($nombreExercices == 1) {
+                        $exercice = $exercices->first();
+                        $droitConge = $exercice->droitConge;
+                        $JOURS_RESTANT = $droitConge->JOURS_RESTANT - $nombreDeJours;
+                        DroitConge::where('ID', $droitConge->ID)->update([
+                                'JOURS_RESTANT' => $JOURS_RESTANT,
+                                'JOURS_PRIS' => $nombreDeJours,
+                        ]);
+                    } else{
+                        $premierExercice = $exercices[0];
+                        $secondExercice = $exercices[1];
+
+                        // Récupérer les DroitConge associés
+                        $premierDroit = $premierExercice->droitConge;
+                        $secondDroit = $secondExercice->droitConge;
+                        // $jours = $nombreDeJours;
+                        $nombreDeJours -= $premierDroit->JOURS_RESTANT;
+                        // $premierDroit->delete();
+                        // dd($JOURS_RESTANT = $premierDroit->JOURS_RESTANT - $jours);
+                        DroitConge::where('ID', $premierDroit->ID)->update([
+                            'JOURS_RESTANT' => 0,
+                            'JOURS_PRIS' => 30,
+                    ]);
+                        $JOURS_RESTANT = $secondDroit->JOURS_RESTANT - $nombreDeJours;
+                        DroitConge::where('ID', $secondDroit->ID)->update([
+                            'JOURS_RESTANT' => $JOURS_RESTANT,
+                            'JOURS_PRIS' => $nombreDeJours,
+                    ]);
+                    }
+
+                }
             }
+
         });
 
         return redirect()->route('listedemandes.index')->with('success', 'Décision enregistrée avec succès.');

@@ -1,13 +1,7 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
 
 
-    <title>Document</title>
+
+
 
     <style>
          .alert {
@@ -43,9 +37,38 @@
             transform: translateX(0);
         }
     }
+
+    .form-control {
+    position: relative; /* Assure que la position relative est appliquée au champ de saisie */
+}
+
+.field-icon {
+    position: absolute;
+    right: 25px; /* Ajustez selon la marge désirée du bord droit du champ */
+    top: 81.5%;
+    transform: translateY(-50%); /* Centrage vertical de l'icône */
+    cursor: pointer;
+    z-index: 2; /* S'assure que l'icône est au-dessus des autres éléments mais pas trop élevé pour éviter les conflits de z-index */
+}
+
+.btn:hover{
+    background-color: gray;
+}
     </style>
-</head>
-<body>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __(' Employes') }}
+        </h2>
+    </x-slot>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+    <!-- Lien CSS pour Choices.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+
+    <!-- Script JavaScript pour Choices.js -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
     {{-- resources/views/employes/index.blade.php --}}
 
     @if ($errors->any())
@@ -64,38 +87,47 @@
     </div>
 @endif
 
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Liste des Employés</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-            Ajouter un Employé
-        </button>
-    </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Matricule</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Poste</th>
-                <th>Date d'embauche</th>
-                <th>Structure</th>
-                <th>Rôle</th>
-                <th>Actions</th>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <div class = "container">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="text-lg font-semibold mb-4">Liste des Employes</h3>
+                    <button type="button" class="btn btn-black" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" style="margin-bottom: 10px; background-color : gray; color:white;  ">
+                        Ajouter un Employé
+                    </button>
+                        </div>
+
+                    </div>
+
+                    <table class="min-w-full divide-y divide-gray-200" id="table">
+                        <thead class="bg-gray-50">
+
+                         <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matricule</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prénom</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poste</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'embauche</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Structure</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
         </thead>
         <tbody>
             @foreach($employes as $employe)
             <tr>
-                <td>{{ $employe->MATRICULE }}</td>
-                <td>{{ $employe->NOM }}</td>
-                <td>{{ $employe->PRENOM }}</td>
-                <td>{{ $employe->POSTE }}</td>
-                <td>{{ $employe->DATE_EMBAUCHE }}</td>
-                <td>{{ $employe->structure->NOM }}</td>
-                <td>{{ $employe->role->NOM }}</td>
-                <td>
-                    <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-primary">Modifier</a>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->MATRICULE }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->NOM }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->PRENOM }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->POSTE }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->DATE_EMBAUCHE }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->structure->NOM }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->role->NOM }}</td>
+                <td class = " px-6 py-4 whitespace-nowrap">
+                    <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-success" >Modifier</a>
                     <form action="{{ route('employes.destroy', $employe->MATRICULE) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
@@ -107,6 +139,10 @@
         </tbody>
     </table>
 </div>
+</div>
+</div>
+</div>
+</div>
 
     <!-- Modale -->
     <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
@@ -114,9 +150,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addEmployeeModalLabel">Nouvel Employé</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('employes.store') }}" method="POST" class="row">
@@ -193,9 +227,7 @@
                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                            <a href="{{ route('employes.create') }}" class="btn btn-primary">Agrandir</a>
+                            <button type="submit" class="btn btn-primary" style="background-color: black;">Enregistrer</button>
                         </div>
                     </form>
                 </div>
@@ -209,17 +241,16 @@
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 
 
-</body>
-
+</x-app-layout>
 
 <script>
     $(document).ready(function() {
-    $('.table').DataTable({
+    $('#table').DataTable({
         "language": {
             "url": "//cdn.datatables.net/plug-ins/1.12.1/i18n/fr-FR.json"  // Charger la traduction en Français
         }
     });
-});
+    });
     document.addEventListener("DOMContentLoaded", function () {
       // Fonction pour basculer la visibilité du mot de passe
       document.querySelectorAll('.toggle-password').forEach(function (element) {
@@ -263,4 +294,4 @@
 
         </script>
 
-</html>
+

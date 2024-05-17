@@ -9,7 +9,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="{{ route('employes.update', $employe->ID) }}" method="POST">
+    <form action="{{ route('employes.update', $employe->MATRICULE) }}" method="POST">
         @csrf
 
         @method('PUT')
