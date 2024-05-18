@@ -29,6 +29,10 @@
         .form-group {
             margin-bottom: 10px;
         } */
+        body{
+            padding-left:150px;
+            padding-right:150px;
+        }
         .alert {
         border-radius: 0.4rem;
         padding: 10px 20px;
@@ -118,12 +122,12 @@
 
 
 .weekend {
-    background-color: rgb(241, 50, 241);
+    background-color:#9195F6;
     color: white;
 }
 
 .selected-range {
-            background-color: violet;
+            background-color: #B7C9F2;
             color: white ;
         }
 /* rgb(169, 170, 255) */
@@ -147,7 +151,7 @@
 .btn {
             padding: 5px 10px;
             cursor: pointer;
-            background-color: rgb(241, 50, 241);
+            background-color: #9195F6;
             color: white;
             border: none;
             border-radius: 5px;
@@ -155,7 +159,7 @@
         }
 
 .btn:hover{
-    background-color: violet;
+    background-color: #B7C9F2  ;
     color: white;
 }
     </style>
