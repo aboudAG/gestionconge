@@ -118,13 +118,13 @@
 
 
 .weekend {
-    background-color: gray ;
+    background-color: rgb(241, 50, 241);
     color: white;
 }
 
 .selected-range {
-            background-color: rgb(238, 255, 56);
-            color: black ;
+            background-color: violet;
+            color: white ;
         }
 /* rgb(169, 170, 255) */
 .calendar-navigation {
@@ -147,7 +147,7 @@
 .btn {
             padding: 5px 10px;
             cursor: pointer;
-            background-color: gray;
+            background-color: rgb(241, 50, 241);
             color: white;
             border: none;
             border-radius: 5px;
@@ -155,7 +155,8 @@
         }
 
 .btn:hover{
-    background-color: rgb(202, 201, 201);
+    background-color: violet;
+    color: white;
 }
     </style>
 <x-slot name="header">
@@ -256,7 +257,10 @@
           @if ($droitConges)
           <ul>
             @foreach ($droitConges as $droit)
-              <li>{{ $droit->ANNEE }}: {{ $droit->JOURS_RESTANT }} jours restants</li>
+                @if ($droit->JOURS_RESTANT >0)
+                 <li>{{ $droit->ANNEE }}: {{ $droit->JOURS_RESTANT }} jours restants</li>
+                @endif
+
             @endforeach
           </ul>
           @endif
