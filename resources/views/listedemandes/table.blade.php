@@ -62,16 +62,16 @@
             <td class = " px-6 py-4 whitespace-nowrap">{{ optional($demande->employe->structure)->NOM ?? 'Non spécifié' }}</td>
             <td class = " px-6 py-4 whitespace-nowrap">{{ optional($demande->employe->structure)->TYPE ?? 'Non spécifié' }}</td>
             <td class = " px-6 py-4 whitespace-nowrap">
-               <a href="{{ route('decisiondemande.show', $demande->ID) }}" data-bs-toggle="modal" data-bs-target="#decisionModal" class="btn btn-primary" style="background-color : black;">Consulter</a>
+               <a href="{{ route('decisiondemande.show', $demande->ID) }}" data-bs-toggle="modal" data-bs-target="#decisionModal{{ $demande->ID }}" class="btn btn-primary" style="background-color : black;">Consulter</a>
             </td>
 
         </tr>
 
-        <div class="modal fade" id="decisionModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="decisionModal{{ $demande->ID }}" tabindex="-1" aria-labelledby="modalLabel{{ $demande->ID }}" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="modalLabel">Décision Demande de Congé</h5>
+                  <h5 class="modal-title" id="modalLabel{{ $demande->ID }}" >Décision Demande de Congé</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

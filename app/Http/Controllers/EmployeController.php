@@ -122,7 +122,7 @@ public function update(Request $request, $ID)
     ]);
 
     // Met à jour l'employé dans la base de données
-    Employe::where('ID', $ID)->update([
+    Employe::where('MATRICULE', $ID)->update([
         'NOM' => $request->NOM,
         'PRENOM' => $request->PRENOM,
         'POSTE' => $request->POSTE,

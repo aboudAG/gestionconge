@@ -127,7 +127,7 @@
                 <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->structure->NOM }}</td>
                 <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->role->NOM }}</td>
                 <td class = " px-6 py-4 whitespace-nowrap">
-                    <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-success" >Modifier</a>
+                    <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#updateEmployeeModal{{$employe->MATRICULE}}" >Modifier</a>
                     <form action="{{ route('employes.destroy', $employe->MATRICULE) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
@@ -135,6 +135,62 @@
                     </form>
                 </td>
             </tr>
+
+        <div class="modal fade" id="updateEmployeeModal{{$employe->MATRICULE}}" tabindex="-1" aria-labelledby="updateEmployeeModalLabel{{$employe->MATRICULE}}" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateEmployeeModalLabel{{$employe->MATRICULE}}">Modifier Employé</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('employes.update' , $employe->MATRICULE) }}" method="POST" class="row">
+                        @csrf
+                        @method('PUT')
+                        <div class="col-md-6">
+                            <label for="MATRICULE" class="form-label">Matricule</label>
+                            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{$employe->MATRICULE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="NOM" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="NOM" name="NOM" value="{{$employe->NOM}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="PRENOM" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="PRENOM" name="PRENOM" value="{{$employe->PRENOM}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="POSTE" class="form-label">Poste</label>
+                            <input type="text" class="form-control" id="POSTE" name="POSTE" value="{{$employe->POSTE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="DATE_EMBAUCHE" class="form-label">Date d'embauche</label>
+                            <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" value="{{$employe->DATE_EMBAUCHE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ROLE" class="form-label">Rôle</label>
+                            <select class="form-select" id="ROLE" name="ROLE_ID">
+                                @foreach($roles as $role)
+                                <option value="{{ $role->ID }}">{{ $role->NOM }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="STRUCTURE" class="form-label">Structure</label>
+                            <select class="form-select" id="STRUCTURE" name="STRUCTURE_ID" >
+                                @foreach($structures as $structure)
+                                <option value="{{ $structure->ID }}">{{ $structure->NOM }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" style="background-color: black;">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
             @endforeach
         </tbody>
     </table>
@@ -191,7 +247,7 @@
                         </div>
                         <div class="col-md-6">
                             <label for="STRUCTURE" class="form-label">Structure</label>
-                            <select class="form-select" id="STRUCTURE" name="STRUCTURE_ID">
+                            <select class="form-select" id="STRUCTURE" name="STRUCTURE_ID" >
                                 @foreach($structures as $structure)
                                 <option value="{{ $structure->ID }}">{{ $structure->NOM }}</option>
                                 @endforeach
@@ -234,6 +290,64 @@
             </div>
         </div>
     </div>
+
+    <!-- Modale -->
+    {{-- <div class="modal fade" id="updateEmployeeModal" tabindex="-1" aria-labelledby="updateEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateEmployeeModalLabel">Nouvel Employé</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('employes.update' , $employe->MATRICULE) }}" method="POST" class="row">
+                        @csrf
+                        @method('PUT')
+                        <div class="col-md-6">
+                            <label for="MATRICULE" class="form-label">Matricule</label>
+                            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{$employe->MATRICULE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="NOM" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="NOM" name="NOM" value="{{$employe->NOM}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="PRENOM" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="PRENOM" name="PRENOM" value="{{$employe->PRENOM}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="POSTE" class="form-label">Poste</label>
+                            <input type="text" class="form-control" id="POSTE" name="POSTE" value="{{$employe->POSTE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="DATE_EMBAUCHE" class="form-label">Date d'embauche</label>
+                            <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" value="{{$employe->DATE_EMBAUCHE}}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="ROLE" class="form-label">Rôle</label>
+                            <select class="form-select" id="ROLE" name="ROLE_ID">
+                                @foreach($roles as $role)
+                                <option value="{{ $role->ID }}">{{ $role->NOM }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="STRUCTURE" class="form-label">Structure</label>
+                            <select class="form-select" id="STRUCTURE" name="STRUCTURE_ID">
+                                @foreach($structures as $structure)
+                                <option value="{{ $structure->ID }}">{{ $structure->NOM }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" style="background-color: black;">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> --}}
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </div>
@@ -283,14 +397,16 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-         var element = document.getElementById('STRUCTURE');
-         var choices = new Choices(element, {
-         searchEnabled: true,
-         shouldSort: false,
-         placeholderValue: 'Sélectionnez une structure',
-         itemSelectText: '',
-         });
+    var elements = document.getElementsByClassName('form-select');
+    Array.prototype.forEach.call(elements, function(element) {
+        var choices = new Choices(element, {
+            searchEnabled: true,
+            shouldSort: false,
+            placeholderValue: 'Sélectionnez une structure',
+            itemSelectText: '',
         });
+    });
+});
 
         </script>
 
