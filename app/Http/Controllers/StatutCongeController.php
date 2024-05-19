@@ -14,20 +14,13 @@ class StatutCongeController extends Controller
     public function index()
 {
     // Récupérer l'utilisateur connecté
-    $user = Auth::user();
-
-    // Vérifier si l'utilisateur est connecté
-    if ($user) {
-        // Récupérer l'employé correspondant à l'utilisateur connecté
-        $employe = $user->employe;
-
-        // Vérifier si l'employé existe
-        if ($employe) {
-            // Récupérer toutes les demandes de congé de l'employé avec leurs statuts
-            $demandes = $employe->demandes()->with('statuts.etape')->get();
+    $userMatricule = Auth::user()->MATRICULE;
+    $demandes = Demande::where('EMPLOYE_ID', $userMatricule)
+        ->with('statuts.etape')
+        ->orderBy('DATE_DEBUT', 'desc')
+        ->get();
 
             return view('statutsconges.index', compact('demandes'));
         }
     }
-}
-}
+

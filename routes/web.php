@@ -11,6 +11,7 @@ use App\Http\Controllers\DemandeCongeListeController;
 use App\Http\Controllers\DemandeCongeDecisionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\SuivreDemandeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,3 +82,5 @@ Route::get('/statutsconges', [StatutCongeController::class, 'index'])->name('sta
 Route::get('/listedemandes', [DemandeCongeListeController::class, 'index'])->name('listedemandes.index');
 Route::get('/demande/{id}', [DemandeCongeDecisionController::class, 'show'])->name('decisiondemande.show');
 Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'decide'])->name('demandes.decide');
+
+Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');

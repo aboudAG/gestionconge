@@ -19,6 +19,9 @@
                     <x-nav-link :href="route('demandes.create')" :active="request()->routeIs('demandes.create')">
                         {{ __('Faire une  demande de conge') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('leave.track')" :active="request()->routeIs('leave.track')">
+                        {{ __('Suivre ma demande') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('statutsconges.index')" :active="request()->routeIs('statutsconges.index')">
                         {{ __('Historique des demandes') }}
                     </x-nav-link>

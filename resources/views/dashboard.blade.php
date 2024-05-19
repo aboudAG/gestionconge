@@ -77,8 +77,9 @@
                 </div>
                 <!-- History Div -->
                 <div class="card border">
-                    <div class="card-header">
-                        History
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>History</span>
+                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
                     </div>
                     <div class="card-body">
                         @if($userDemandesConges->isEmpty())
@@ -102,15 +103,15 @@
                                             <tr>
                                                 <td>{{ $demande->ID ?? 'N/A' }}</td>
                                                 <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
-                                                <td>{{ $demande->DATE_DEBUT->format('Y-m-d')}}</td>
+                                                <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
                                                 <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
                                                 <td>{{ $demande->DATE_DEBUT->diffInDays($demande->DATE_FIN) + 1 }} days</td>
-                                                <td>{{ $demande->statuts->last()->STATUT ?? "Terminé" }}</td>
+                                                <td>{{ $demande->latestStatut ?? 'Terminé' }}</td>
                                                 <td>
-                                                    @if($demande->latestEtape)
-                                                        {{ $demande->latestEtape->NOM }}
-                                                    @else
+                                                    @if($demande->latestStatut === 'Accepter')
                                                         ----
+                                                    @else
+                                                        {{ $demande->latestEtape ?? '----' }}
                                                     @endif
                                                 </td>
                                             </tr>
@@ -131,52 +132,51 @@
                         Team Leave Info
                     </div>
                     <div class="card-body">
-                        @if($teamMembersOnLeave->isEmpty())
+                        @php
+                            $hasFutureLeaves = false;
+                        @endphp
+                        
+                        @foreach($teamMembersOnLeave as $member)
+                            @foreach($member->demandes as $demande)
+                                @if($demande->DATE_FIN->isFuture())
+                                    @php
+                                        $hasFutureLeaves = true;
+                                    @endphp
+                                @endif
+                            @endforeach
+                        @endforeach
+            
+                        @if(!$hasFutureLeaves)
                             <p class="text-muted">No team members are currently on leave or have upcoming leave planned.</p>
                         @else
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Employee Name</th>
-                                            <th>Type of Leave</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Jours restants</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($teamMembersOnLeave as $member)
-                                            @foreach($member->demandes as $demande)
-                                                <tr>
-                                                    <td>{{ $member->NOM }} {{ $member->PRENOM }}</td>
-                                                    <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
-                                                    <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
-                                                    <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
-                                                    <td>
-                                                        @if (now()->lte($demande->DATE_FIN))
-                                                            {{ now()->diffInDays($demande->DATE_FIN) }} days
-                                                        @else
-                                                            0 days
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
-                                                            En cours
-                                                        @else
-                                                            Prévue
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                            @foreach($teamMembersOnLeave as $member)
+                                @foreach($member->demandes as $demande)
+                                    @if($demande->DATE_FIN->isFuture())
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-6">
+                                                <div><strong>Employee:</strong> {{ $member->NOM }} {{ $member->PRENOM }}</div>
+                                                <div><strong>Start Date:</strong> {{ $demande->DATE_DEBUT->format('Y-m-d') }}</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div><strong>Status:</strong> 
+                                                    @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
+                                                        En cours
+                                                    @else
+                                                        Prévue
+                                                    @endif
+                                                    ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} days left)
+                                                </div>
+                                                <div><strong>End Date:</strong> {{ $demande->DATE_FIN->format('Y-m-d') }}</div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endforeach
                         @endif
                     </div>
                 </div>
+            
+            
 
                 <!-- Calendar Div -->
                 <div class="card border">
@@ -220,11 +220,11 @@
         margin: 0 auto;
     }
     .fc-holiday {
-        background-color: #9195F6 !important;
+        background-color: #435161 !important;
         color: white !important;
     }
     .fc-weekend {
-        background-color: #B7C9F2 !important;
+        background-color: #4A90E2 !important;
         color: white !important;
         position: relative; /* Ensure the custom title is positioned correctly */
     }
@@ -233,7 +233,7 @@
         bottom: 0;
         width: 100%;
         text-align: center;
-        background-color: #B7C9F2;
+        background-color: #4A90E2;
         color: black;
         font-weight: bold;
         padding: 2px 0;

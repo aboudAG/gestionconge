@@ -30,4 +30,9 @@ class StatutConge extends Model
 {
     return $this->belongsTo(Etape::class, 'ETAPE_ID', 'ID');
 }
+
+public function approbateur()
+{
+    return $this->belongsTo(Employe::class, 'APPROUVEUR_ID', 'MATRICULE');
+}
 }
