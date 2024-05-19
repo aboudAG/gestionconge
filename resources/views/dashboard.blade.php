@@ -1,7 +1,8 @@
 <x-app-layout>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMcO5cG2z6pJ4VTxnp9jZm+lz1prnp4fKn4aFjc" crossorigin="anonymous">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __("Bienvenue le site de congé de l'entreprise E.P.A.L") }}
         </h2>
     </x-slot>
 
@@ -15,16 +16,64 @@
                         Information
                     </div>
                     <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">Remaining Leave Balance This Year: <strong>{{ $soldeCongeRestant }}</strong></li>
-                            <li class="list-group-item">Total Remaining Leave Balance: <strong>{{ $totalSoldeCongeRestant }}</strong></li>
-                            <li class="list-group-item">Leave Days Taken This Year: <strong>{{ $joursCongePrisCetteAnnee }}</strong></li>
-                            <li class="list-group-item">Total Leave Requests: <strong>{{ $nombreDemandesCongeTotal }}</strong></li>
-                            <li class="list-group-item">Approved Leave Requests: <strong>{{ $nombreDemandesCongeAccepte }}</strong></li>
-                            <li class="list-group-item">Denied Leave Requests: <strong>{{ $nombreDemandesCongeRefuse }}</strong></li>
-                            <li class="list-group-item">Pending Leave Requests: <strong>{{ $nombreDemandesCongeEnAttente }}</strong></li>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- Chart Container -->
+                        <div class="chart-container">
+                            <canvas id="leaveBalanceChart"></canvas>
+                        </div>
+                        <!-- Total Remaining Leave Balance -->
+                        <ul class="list-group list-group-flush ml-4">
+                            <li class="list-group-item"><strong>Solde de congé totale: {{ $totalSoldeCongeRestant }}</strong></li>
+                            @foreach($soldeAnnee as $conge)
+                            <li class="list-group-item">Année: <strong>{{ $conge->ANNEE }}</strong>, Solde: <strong>{{ $conge->JOURS_RESTANT }} </strong> Jrs</li>
+                            @endforeach
                         </ul>
+                        
                     </div>
+                
+                    <div class="row mt-4">
+                        <!-- Total Leave Requests -->
+                        <div class="col-6 mb-4">
+                            <div class="d-flex align-items-center border p-3 rounded">
+                                <img src="{{ asset('images/totale.jpg') }}" alt="Total Requests" class="me-3" style="width: 40px; height: 40px;">
+                                <div>
+                                    <strong>{{ $nombreDemandesCongeTotal }}</strong>
+                                    <div>Total Leave Requests</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Approved Leave Requests -->
+                        <div class="col-6 mb-4">
+                            <div class="d-flex align-items-center border p-3 rounded">
+                                <img src="{{ asset('images/approved.jpg') }}" alt="Approved Requests" class="me-3" style="width: 40px; height: 40px;">
+                                <div>
+                                    <strong>{{ $nombreDemandesCongeAccepte }}</strong>
+                                    <div>Approved Leave Requests</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Denied Leave Requests -->
+                        <div class="col-6 mb-4">
+                            <div class="d-flex align-items-center border p-3 rounded">
+                                <img src="{{ asset('images/denied.jpg') }}" alt="Denied Requests" class="me-3" style="width: 40px; height: 40px;">
+                                <div>
+                                    <strong>{{ $nombreDemandesCongeRefuse }}</strong>
+                                    <div>Denied Leave Requests</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pending Leave Requests -->
+                        <div class="col-6 mb-4">
+                            <div class="d-flex align-items-center border p-3 rounded">
+                                <img src="{{ asset('images/pending.jpg') }}" alt="Pending Requests" class="me-3" style="width: 40px; height: 40px;">
+                                <div>
+                                    <strong>{{ $nombreDemandesCongeEnAttente }}</strong>
+                                    <div>Pending Leave Requests</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
                 <!-- History Div -->
                 <div class="card border">
@@ -56,7 +105,7 @@
                                                 <td>{{ $demande->DATE_DEBUT->format('Y-m-d')}}</td>
                                                 <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
                                                 <td>{{ $demande->DATE_DEBUT->diffInDays($demande->DATE_FIN) + 1 }} days</td>
-                                                <td>{{ $demande->statuts->last()->STATUT ?? 'Terminé' }}</td>
+                                                <td>{{ $demande->statuts->last()->STATUT ?? "Terminé" }}</td>
                                                 <td>
                                                     @if($demande->latestEtape)
                                                         {{ $demande->latestEtape->NOM }}
@@ -128,6 +177,7 @@
                         @endif
                     </div>
                 </div>
+
                 <!-- Calendar Div -->
                 <div class="card border">
                     <div class="card-header">
@@ -140,9 +190,9 @@
             </div>
 
             <!-- Third Column: Announcements -->
-            <div class="col-md-4">
+            <div class="col-md-4 d-flex flex-column">
                 <!-- Announcement Div -->
-                <div class="card border">
+                <div class="card border flex-grow-1">
                     <div class="card-header">
                         Announcements
                     </div>
@@ -165,8 +215,8 @@
         background-color: #ffffff;
     }
     #calendar {
-        height:350px;
-        width:390px;
+        height: 350px;
+        width: 100%; /* Make the calendar fit the card width */
         margin: 0 auto;
     }
     .fc-holiday {
@@ -193,47 +243,75 @@
         border-radius: 0 !important; /* Remove rounded corners */
         height: 20px !important; /* Adjust height as needed */
     }
+    .chart-container{
+        width: 200px; /* Adjust as necessary */
+    height: 200px; /
+    }
 </style>
 
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar');
-            
-            // Fetch holidays from the Blade template
-            const holidays = @json($holidays);
+        const calendarEl = document.getElementById('calendar');
 
-            // Map holidays to FullCalendar events
-            const events = holidays.map(holiday => ({
-                title: "Jour ferié: "+ holiday.DESIGNATION,
-                start: holiday.JOUR_DEBUT,
-                end: holiday.JOUR_FIN ? new Date(new Date(holiday.JOUR_FIN).getTime() + 24 * 60 * 60 * 1000) : holiday.JOUR_DEBUT, // FullCalendar's end date is exclusive, so add one day
-                className: 'fc-holiday'
-            }));
+        // Fetch holidays from the Blade template
+        const holidays = @json($holidays);
 
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: events,
-                eventContent: function(arg) {
-                    // Custom rendering to remove random number and adjust appearance
-                    let titleEl = document.createElement('div');
-                    titleEl.innerHTML = arg.event.title;
-                    titleEl.style.lineHeight = '20px'; // Adjust line height for thicker appearance
-                    
-                    titleEl.style.color="white";    
-                    let arrayOfDomNodes = [ titleEl ];
-                    return { domNodes: arrayOfDomNodes };
-                },
-                
-                dayCellDidMount: function(info) {
-                    const date = new Date(info.date);
-                    if (date.getDay() === 5 || date.getDay() === 6) { // Friday (5) or Saturday (6)
-                        info.el.classList.add('fc-weekend');
-                        info.el.setAttribute('title', 'Weekend');
-                    }
+        // Map holidays to FullCalendar events
+        const events = holidays.map(holiday => ({
+            title: "Jour ferié: " + holiday.DESIGNATION,
+            start: holiday.JOUR_DEBUT,
+            end: holiday.JOUR_FIN ? new Date(new Date(holiday.JOUR_FIN).getTime() + 24 * 60 * 60 * 1000) : holiday.JOUR_DEBUT, // FullCalendar's end date is exclusive, so add one day
+            className: 'fc-holiday'
+        }));
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: events,
+            eventContent: function(arg) {
+                // Custom rendering to remove random number and adjust appearance
+                let titleEl = document.createElement('div');
+                titleEl.innerHTML = arg.event.title;
+                titleEl.style.lineHeight = '20px'; // Adjust line height for thicker appearance
+
+                titleEl.style.color = "white";
+                let arrayOfDomNodes = [titleEl];
+                return { domNodes: arrayOfDomNodes };
+            },
+            dayCellDidMount: function(info) {
+                const date = new Date(info.date);
+                if (date.getDay() === 5 || date.getDay() === 6) { // Friday (5) or Saturday (6)
+                    info.el.classList.add('fc-weekend');
+                    info.el.setAttribute('title', 'Weekend');
+                }
                 }
             });
 
             calendar.render();
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('leaveBalanceChart').getContext('2d');
+        const leaveBalanceChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Remaining Leave Balance', 'Leave Days Taken               '],
+                datasets: [{
+                    data: [{{ $soldeCongeRestant }}, {{ $joursCongePrisCetteAnnee }}],
+                    backgroundColor: ['#4CAF50', '#FF6384'],
+                    hoverBackgroundColor: ['#45A049', '#FF4384']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    });
 </script>
+

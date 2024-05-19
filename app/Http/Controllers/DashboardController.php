@@ -45,6 +45,9 @@ class DashboardController extends Controller
         // nombre totale de demande de congé:
         $nombreDemandesCongeTotal = Demande::where('EMPLOYE_ID', $userMatricule)
         ->count();
+
+
+        $soldeAnnee = DroitConge::where('EMPLOYE_ID', $user->MATRICULE)->get();
         //nombre totale de demande de congé acecpter:
         $etapeRHId = Etape::where('nom', 'RH')->value('ID');
 
@@ -55,6 +58,8 @@ class DashboardController extends Controller
                       ->where('STATUT', 'Accepter');
             })
             ->count();
+
+
 
         //count the number of denied leave requests:
         $nombreDemandesCongeRefuse = Demande::where('EMPLOYE_ID', $userMatricule)
@@ -121,7 +126,8 @@ class DashboardController extends Controller
             'nombreDemandesCongeEnAttente' => $nombreDemandesCongeEnAttente,
             'userDemandesConges' => $userDemandesConges,
             'teamMembersOnLeave' =>  $teamMembersOnLeave,
-            'holidays' => $holidays
+            'holidays' => $holidays,
+            'soldeAnnee' => $soldeAnnee
         ]);
     
     }
