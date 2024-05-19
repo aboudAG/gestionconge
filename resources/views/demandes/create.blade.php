@@ -205,16 +205,16 @@
 <form action="{{ route('demandes.store') }}" method="POST" id="leaveRequestForm" class="p-4 bg-white shadow-lg rounded-lg">
     @csrf
     <div class="form-group mb-4">
-        <label for="startDate" class="form-label font-weight-bold">Date de début :</label>
-        <input type="date" class="form-control shadow-sm" id="startDate" name="DATE_DEBUT" readonly>
+        <label for="startDate" class="form-label font-weight-bold" >Date de début :</label>
+        <input type="date" class="form-control shadow-sm" id="startDate" name="DATE_DEBUT"  readonly>
     </div>
     <div class="form-group mb-4">
-        <label for="endDate" class="form-label font-weight-bold">Date de fin :</label>
-        <input type="date" class="form-control border-0 shadow-sm px-3" id="endDate" name="DATE_FIN" readonly>
+        <label for="endDate" class="form-label font-weight-bold" >Date de fin :</label>
+        <input type="date" class="form-control border-0 shadow-sm px-3" id="endDate" name="DATE_FIN"readonly>
     </div>
-    <div class="form-group mb-4" id="yearSelection" style="display:none;">
-        <label for="year1" class="form-label font-weight-bold">Année de congé 1 :</label>
-        <select class="form-control border-0 shadow-sm px-3" id="year1" name="year1"></select>
+    <div class="form-group mb-4" id="yearSelection" style="display:none;" >
+        <label for="year1" class="form-label font-weight-bold" >Année de congé 1 :</label>
+        <select class="form-control border-0 shadow-sm px-3" id="year1" name="year1" ></select>
     </div>
     <div class="form-group mb-4" id="yearSelection2" style="display:none;">
         <label for="year2" class="form-label font-weight-bold">Année de congé 2 (optionnel) :</label>
@@ -472,6 +472,7 @@ function fillYearOptions() {
 
     droitConges.forEach((droit) => {
         let option = new Option(`${droit.ANNEE} - ${droit.JOURS_RESTANT} jours disponibles`, droit.ANNEE);
+        option.dataset.joursRestant = droit.JOURS_RESTANT;
         year1Select.add(option.cloneNode(true));
         year2Select.add(new Option(option.text, option.value));
     });
@@ -492,20 +493,22 @@ function toggleYear2Availability() {
     const year1 = document.getElementById('year1').value;
     const startDate = new Date(document.getElementById('startDate').value);
     const endDate = new Date(document.getElementById('endDate').value);
-    const startYear = startDate.getFullYear();
-    const endYear = endDate.getFullYear();
+    const differenceInMilliseconds = endDate - startDate;
+    const differenceInDays = differenceInMilliseconds / (1000 * 3600 * 24);
+    const inclusiveDifference = Math.ceil(differenceInDays + 1); // Utilisation de Math.ceil pour s'assurer d'inclure toute la journée
     const year2Select = document.getElementById('year2');
-
-    if (year1) {
-        if (parseInt(year1) < startYear || parseInt(year1) > endYear) {
-            year2Select.disabled = false;
-            year2Select.value = ''; // Reset year2 if it's out of range
-        } else {
-            year2Select.disabled = true;
-        }
+    const selectedYear1Option = document.querySelector(`#year1 option[value="${year1}"]`);
+    const joursRestantsYear1 = parseInt(selectedYear1Option.dataset.joursRestant, 10);
+    if(!isNaN(joursRestantsYear1) ){
+        if (joursRestantsYear1 >= inclusiveDifference) {
+        year2Select.disabled = true; // Désactiver year2 si suffisant
     } else {
-        year2Select.disabled = true; // Disable year2 if year1 is not selected
+        year2Select.disabled = false; // Activer year2 si pas suffisant
     }
+    } else{
+        year2Select.disabled = true;
+    }
+
 }
 
 

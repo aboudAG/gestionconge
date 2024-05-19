@@ -13,6 +13,7 @@ use App\Models\Demande;
 Use App\Models\Exercice;
 use App\Models\StatutConge;
 use App\Models\DroitConge;
+use Carbon\Carbon;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -92,7 +93,36 @@ class DemandeController extends Controller
             // Commencer une transaction de base de données
             DB::beginTransaction();
 
-            //  try {
+             try {
+                $demande = Demande::create([
+                    'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
+                    'TYPE_ID' => $request->input('TYPE_ID'),
+                    'TITRE' => $request->input('TITRE'),
+                    'DATE_DEBUT' => $request->input('DATE_DEBUT'),
+                    'DATE_FIN' => $request->input('DATE_FIN'),
+                    'EMPLOYE_REMPLACEMENT_ID' => $request->input('EMPLOYE_REMPLACEMENT_ID'),
+                    'DATE_CREATION' => now(),
+
+                ]);
+
+                $droit1 = DroitConge::where('ANNEE', $request->year1)->first();
+                $droit2 = DroitConge::where('ANNEE', $request->year2)->first();
+
+                $dateDebut = Carbon::parse($demande->DATE_DEBUT);
+                $dateFin = Carbon::parse($demande->DATE_FIN);
+                $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
+                // $nombreDeJours -= $droit->JOURS_RESTANT;
+
+                if(!$droit2 && $nombreDeJours > $droit1->JOURS_RESTANT){
+
+                    throw new Exception("Vous n\'avez pas assez de solde");
+
+                }elseif ($droit2){
+                    $nombreDeJours -= $droit->JOURS_RESTANT;
+                    if($nombreDeJours > $droit2->JOURS_RESTANT){
+                        throw new Exception("Vous n\'avez pas assez de solde");
+                    }
+                }
                 // Créer une nouvelle demande avec l'ID de l'employé récupéré
                 $demande = Demande::create([
                     'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
@@ -115,32 +145,40 @@ class DemandeController extends Controller
                     'ETAPE_ID' => $etape->ID, // Utiliser la date actuelle pour la date de décision
                 ]);
 
-                $droit = DroitConge::where('ANNEE', $request->year1)->first();
-
+                // $droit = DroitConge::where('ANNEE', $request->year1)->first();
+                // $dateDebut = Carbon::parse($demande->DATE_DEBUT);
+                // $dateFin = Carbon::parse($demande->DATE_FIN);
+                // $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
+                // $nombreDeJours -= $droit->JOURS_RESTANT;
                 $exercice = Exercice::create([
                     'DEMANDE_CONGE_ID' => $demande->id,
-                    'DROIT_AU_CONGE_ID' => $droit->ID,
+                    'DROIT_AU_CONGE_ID' => $droit1->ID,
                 ]);
 
-                $droit = DroitConge::where('ANNEE', $request->year2)->first();
+                // $droit = DroitConge::where('ANNEE', $request->year2)->first();
 
 
-                if($droit){
+                if($droit2 ){
+
                     $exercice = Exercice::create([
                         'DEMANDE_CONGE_ID' => $demande->id,
-                        'DROIT_AU_CONGE_ID' => $droit->ID,
+                        'DROIT_AU_CONGE_ID' => $droit2->ID,
                     ]);
                 }
 
                 // Valider la transaction de base de données
-                DB::commit();
+
+                    DB::commit();
+
+
 
                 return redirect()->route('statutsconges.index')->with('success', 'La demande de congé a été enregistrée avec succès.');
-            // } catch (Exception $e) {
-            //      // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
-            //      DB::rollBack();
-            //      return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
-            //  }
+
+            } catch (Exception $e) {
+                 // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
+                 DB::rollBack();
+                 return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
+             }
         } else {
             // Gérer le cas où l'employé n'est pas trouvé
             return redirect()->intended('login');
