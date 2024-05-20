@@ -47,7 +47,9 @@ class DashboardController extends Controller
         ->count();
 
 
-        $soldeAnnee = DroitConge::where('EMPLOYE_ID', $user->MATRICULE)->get();
+        $soldeAnnee = DroitConge::where('EMPLOYE_ID', $userMatricule)
+    ->orderBy('ANNEE', 'desc')
+    ->get();
         //nombre totale de demande de congé acecpter:
         $etapeRHId = Etape::where('nom', 'RH')->value('ID');
 
@@ -106,6 +108,7 @@ $userDemandesConges->each(function ($demande) {
 
         // Return the dashboard view and pass the data array
         return view('dashboard', [
+            'employe'=>$employe,
             'soldeCongeRestant' => $soldeCongeRestant,
             'totalSoldeCongeRestant' => $totalSoldeCongeRestant,
             'joursCongePrisCetteAnnee' => $joursCongePrisCetteAnnee,

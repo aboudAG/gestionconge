@@ -12,6 +12,7 @@ use App\Http\Controllers\DemandeCongeDecisionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SuivreDemandeController;
+use App\Http\Controllers\TelechargerDemandeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -84,3 +85,4 @@ Route::get('/demande/{id}', [DemandeCongeDecisionController::class, 'show'])->na
 Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'decide'])->name('demandes.decide');
 
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
+Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');

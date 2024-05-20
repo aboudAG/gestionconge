@@ -125,7 +125,7 @@ class DemandeCongeListeController extends Controller
             // Filter these demandes to check the current etape using the loaded data.
                 $demandes = $demandesrh->filter(function ($demande) {
                 $currentEtape = $demande->currentEtape();
-                return $currentEtape && $currentEtape->NOM === 'Rh';
+                return $currentEtape && $currentEtape->NOM === 'RH';
             });
                 break;
 

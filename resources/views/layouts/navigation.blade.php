@@ -25,6 +25,12 @@
                     <x-nav-link :href="route('statutsconges.index')" :active="request()->routeIs('statutsconges.index')">
                         {{ __('Historique des demandes') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('listedemandes.index')" :active="request()->routeIs('listedemandes.index')">
+                        {{ __('Liste des demandes de congés') }}
+                    </x-nav-link>
+
+                
+
                 </div>
             </div>
 
