@@ -14,7 +14,7 @@ class Demande extends Model
 
     protected $fillable = [
         'EMPLOYE_ID',
-        'TYPE_ID',
+        'TYPE_DEMANDE',
         'TITRE',
         'DATE_DEBUT',
         'DATE_FIN',

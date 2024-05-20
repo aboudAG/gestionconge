@@ -96,7 +96,7 @@ class DemandeController extends Controller
              try {
                 $demande = Demande::create([
                     'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
-                    'TYPE_ID' => $request->input('TYPE_ID'),
+                    'TYPE_DEMANDE' => $request->input('TYPE_ID'),
                     'TITRE' => $request->input('TITRE'),
                     'DATE_DEBUT' => $request->input('DATE_DEBUT'),
                     'DATE_FIN' => $request->input('DATE_FIN'),
@@ -123,21 +123,10 @@ class DemandeController extends Controller
                         throw new Exception("Vous n\'avez pas assez de solde");
                     }
                 }
-                // Créer une nouvelle demande avec l'ID de l'employé récupéré
-                $demande = Demande::create([
-                    'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
-                    'TYPE_ID' => $request->input('TYPE_ID'),
-                    'TITRE' => $request->input('TITRE'),
-                    'DATE_DEBUT' => $request->input('DATE_DEBUT'),
-                    'DATE_FIN' => $request->input('DATE_FIN'),
-                    'EMPLOYE_REMPLACEMENT_ID' => $request->input('EMPLOYE_REMPLACEMENT_ID'),
-                    'DATE_CREATION' => now(),
-
-                ]);
 
                 // Créer une nouvelle entrée dans la table statut_conges
                 $statutConge = StatutConge::create([
-                    'STATUT_ID' => null,
+                    'ID' => null,
                     'DEMANDE_CONGE_ID' => $demande->id,
                     'STATUT' => 'En Attente',
                     'APPROUVEUR_ID' => null,
@@ -150,7 +139,7 @@ class DemandeController extends Controller
                 // $dateFin = Carbon::parse($demande->DATE_FIN);
                 // $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
                 // $nombreDeJours -= $droit->JOURS_RESTANT;
-                $exercice = Exercice::create([
+                $exercice = Exercice::create([  
                     'DEMANDE_CONGE_ID' => $demande->id,
                     'DROIT_AU_CONGE_ID' => $droit1->ID,
                 ]);
@@ -161,7 +150,7 @@ class DemandeController extends Controller
                 if($droit2 ){
 
                     $exercice = Exercice::create([
-                        'DEMANDE_CONGE_ID' => $demande->id,
+                        'DEMANDE_CONGE_ID' => $demande->ID,
                         'DROIT_AU_CONGE_ID' => $droit2->ID,
                     ]);
                 }
@@ -175,6 +164,7 @@ class DemandeController extends Controller
                 return redirect()->route('statutsconges.index')->with('success', 'La demande de congé a été enregistrée avec succès.');
 
             } catch (Exception $e) {
+                dd($e);
                  // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
                  DB::rollBack();
                  return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);

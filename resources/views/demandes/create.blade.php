@@ -18,7 +18,7 @@
             background-color: #d4edda;
             color: #155724;
         }
-
+        
         .alert {
             animation: fadeIn 0.5s;
         }
