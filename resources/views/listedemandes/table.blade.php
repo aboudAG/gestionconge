@@ -54,8 +54,8 @@
         @foreach ($demandes as $demande)
         <tr>
             <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->TITRE }}</td>
-            <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->DATE_DEBUT }}</td>
-            <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->DATE_FIN }}</td>
+            <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
+            <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
             <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->employe->NOM ?? 'Non disponible' }} {{ $demande->employe->PRENOM ?? '' }}</td>
             <td class = " px-6 py-4 whitespace-nowrap">{{ $demande->employe->POSTE ?? 'Non disponible' }}</td>
             <td class = " px-6 py-4 whitespace-nowrap">{{ optional($demande->employe->structure)->CODE ?? 'Non spécifié' }}</td>

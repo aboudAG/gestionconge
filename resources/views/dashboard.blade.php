@@ -2,83 +2,99 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMcO5cG2z6pJ4VTxnp9jZm+lz1prnp4fKn4aFjc" crossorigin="anonymous">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __("Bienvenue le site de congé de l'entreprise E.P.A.L") }}
+            {{ __("Bienvenue sur le site de congé de l'entreprise E.P.A.L") }}
         </h2>
     </x-slot>
 
     <div class="container mt-4">
         <div class="row">
             <!-- First Column: Information and History -->
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <!-- Information Div -->
                 <div class="card mb-4 border">
                     <div class="card-header">
-                        Information
+                        Informations:    
                     </div>
                     <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <!-- Chart Container -->
-                        <div class="chart-container">
-                            <canvas id="leaveBalanceChart"></canvas>
-                        </div>
-                        <!-- Total Remaining Leave Balance -->
-                        <ul class="list-group list-group-flush ml-4">
-                            <li class="list-group-item"><strong>Solde de congé totale: {{ $totalSoldeCongeRestant }}</strong></li>
-                            @foreach($soldeAnnee as $conge)
-                            <li class="list-group-item">Année: <strong>{{ $conge->ANNEE }}</strong>, Solde: <strong>{{ $conge->JOURS_RESTANT }} </strong> Jrs</li>
-                            @endforeach
-                        </ul>
-                        
-                    </div>
+                        <div class="row">
+                            <!-- User Information -->
+                            <div class="col-md-4">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item"><strong>Employer:</strong> {{ $employe->NOM }}  {{ $employe->PRENOM }}</li>
+                                    <li class="list-group-item"><strong>Matricule:</strong> {{ $employe->MATRICULE }}</li>
+                                    <li class="list-group-item"><strong>Poste:</strong> {{ $employe->POSTE }}</li>
+                                    <li class="list-group-item"><strong>Date d'embauche:</strong> {{ $employe->DATE_EMBAUCHE }}</li>
+                                    <li class="list-group-item"><strong>Structure:</strong> {{ $employe->structure->NOM }}</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Chart Container -->
+                            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                                <div class="chart-container">
+                                    <canvas id="leaveBalanceChart"></canvas>
+                                </div>
+                            </div>
                 
-                    <div class="row mt-4">
-                        <!-- Total Leave Requests -->
-                        <div class="col-6 mb-4">
-                            <div class="d-flex align-items-center border p-3 rounded">
-                                <img src="{{ asset('images/totale.jpg') }}" alt="Total Requests" class="me-3" style="width: 40px; height: 40px;">
-                                <div>
-                                    <strong>{{ $nombreDemandesCongeTotal }}</strong>
-                                    <div>Total Leave Requests</div>
-                                </div>
+                            <!-- Total Remaining Leave Balance -->
+                            <div class="col-md-4">
+                                <ul class="list-group list-group-flush ml-4">
+                                    <li class="list-group-item"><strong>Solde de congé total: {{ $totalSoldeCongeRestant }} Jrs</strong> </li>
+                                    @foreach($soldeAnnee as $conge)
+                                    <li class="list-group-item">Année: <strong>{{ $conge->ANNEE }}</strong>, Solde: <strong>{{ $conge->JOURS_RESTANT }}</strong> Jrs</li>
+                                    @endforeach
+                                </ul>
                             </div>
                         </div>
-                        <!-- Approved Leave Requests -->
-                        <div class="col-6 mb-4">
-                            <div class="d-flex align-items-center border p-3 rounded">
-                                <img src="{{ asset('images/approved.jpg') }}" alt="Approved Requests" class="me-3" style="width: 40px; height: 40px;">
-                                <div>
-                                    <strong>{{ $nombreDemandesCongeAccepte }}</strong>
-                                    <div>Approved Leave Requests</div>
+                        
+                        <div class="row mt-4">
+                            <!-- Total Leave Requests -->
+                            <div class="col-6 mb-4">
+                                <div class="d-flex align-items-center border p-3 rounded">
+                                    <img src="{{ asset('images/totale.jpg') }}" alt="Total Requests" class="me-3" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <strong>{{ $nombreDemandesCongeTotal }}</strong>
+                                        <div>Demandes de congé au totale</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Denied Leave Requests -->
-                        <div class="col-6 mb-4">
-                            <div class="d-flex align-items-center border p-3 rounded">
-                                <img src="{{ asset('images/denied.jpg') }}" alt="Denied Requests" class="me-3" style="width: 40px; height: 40px;">
-                                <div>
-                                    <strong>{{ $nombreDemandesCongeRefuse }}</strong>
-                                    <div>Denied Leave Requests</div>
+                            <!-- Approved Leave Requests -->
+                            <div class="col-6 mb-4">
+                                <div class="d-flex align-items-center border p-3 rounded">
+                                    <img src="{{ asset('images/approved.jpg') }}" alt="Approved Requests" class="me-3" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <strong>{{ $nombreDemandesCongeAccepte }}</strong>
+                                        <div>Demandes de congé approuvé</div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Pending Leave Requests -->
-                        <div class="col-6 mb-4">
-                            <div class="d-flex align-items-center border p-3 rounded">
-                                <img src="{{ asset('images/pending.jpg') }}" alt="Pending Requests" class="me-3" style="width: 40px; height: 40px;">
-                                <div>
-                                    <strong>{{ $nombreDemandesCongeEnAttente }}</strong>
-                                    <div>Pending Leave Requests</div>
+                            <!-- Denied Leave Requests -->
+                            <div class="col-6 mb-4">
+                                <div class="d-flex align-items-center border p-3 rounded">
+                                    <img src="{{ asset('images/denied.jpg') }}" alt="Denied Requests" class="me-3" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <strong>{{ $nombreDemandesCongeRefuse }}</strong>
+                                        <div>Demandes de congé refusée</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Pending Leave Requests -->
+                            <div class="col-6 mb-4">
+                                <div class="d-flex align-items-center border p-3 rounded">
+                                    <img src="{{ asset('images/pending.jpg') }}" alt="Pending Requests" class="me-3" style="width: 40px; height: 40px;">
+                                    <div>
+                                        <strong>{{ $nombreDemandesCongeEnAttente }}</strong>
+                                        <div>Demandes de congé en attente</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <!-- History Div -->
                 <div class="card border">
-                    <div class="card-header">
-                        History
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Historique de mes demandes:</span>
+                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
                     </div>
                     <div class="card-body">
                         @if($userDemandesConges->isEmpty())
@@ -90,10 +106,10 @@
                                         <tr>
                                             <th>Numero demande:</th>
                                             <th>Type</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
+                                            <th>Date debut</th>
+                                            <th>Date fin</th>
                                             <th>Nombre jours</th>
-                                            <th>Status</th>
+                                            <th>Statut</th>
                                             <th>Etape</th>
                                         </tr>
                                     </thead>
@@ -102,15 +118,15 @@
                                             <tr>
                                                 <td>{{ $demande->ID ?? 'N/A' }}</td>
                                                 <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
-                                                <td>{{ $demande->DATE_DEBUT->format('Y-m-d')}}</td>
+                                                <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
                                                 <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
                                                 <td>{{ $demande->DATE_DEBUT->diffInDays($demande->DATE_FIN) + 1 }} days</td>
-                                                <td>{{ $demande->statuts->last()->STATUT ?? "Terminé" }}</td>
+                                                <td>{{ $demande->latestStatut ?? 'Terminé' }}</td>
                                                 <td>
-                                                    @if($demande->latestEtape)
-                                                        {{ $demande->latestEtape->NOM }}
+                                                    @if($demande->latestStatut === 'Accepter')
+                                                        Terminé
                                                     @else
-                                                        ----
+                                                        {{ $demande->latestEtape ?? '----' }}
                                                     @endif
                                                 </td>
                                             </tr>
@@ -124,87 +140,70 @@
             </div>
 
             <!-- Second Column: Team Info and Calendar -->
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <!-- Team Info Div -->
                 <div class="card mb-4 border">
-                    <div class="card-header">
-                        Team Leave Info
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Plan de congé de l'équipe:</span>
+                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
                     </div>
                     <div class="card-body">
-                        @if($teamMembersOnLeave->isEmpty())
+                        @php
+                            $hasFutureLeaves = false;
+                        @endphp
+                        
+                        @foreach($teamMembersOnLeave as $member)
+                            @foreach($member->demandes as $demande)
+                                @if($demande->DATE_FIN->isFuture())
+                                    @php
+                                        $hasFutureLeaves = true;
+                                    @endphp
+                                @endif
+                            @endforeach
+                        @endforeach
+            
+                        @if(!$hasFutureLeaves)
                             <p class="text-muted">No team members are currently on leave or have upcoming leave planned.</p>
                         @else
-                            <div class="table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Employee Name</th>
-                                            <th>Type of Leave</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Jours restants</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($teamMembersOnLeave as $member)
-                                            @foreach($member->demandes as $demande)
-                                                <tr>
-                                                    <td>{{ $member->NOM }} {{ $member->PRENOM }}</td>
-                                                    <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
-                                                    <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
-                                                    <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
-                                                    <td>
-                                                        @if (now()->lte($demande->DATE_FIN))
-                                                            {{ now()->diffInDays($demande->DATE_FIN) }} days
-                                                        @else
-                                                            0 days
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
-                                                            En cours
-                                                        @else
-                                                            Prévue
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+                            @foreach($teamMembersOnLeave as $member)
+                                @foreach($member->demandes as $demande)
+                                    @if($demande->DATE_FIN->isFuture())
+                                        <div class="row mb-3 pb-3 border-bottom">
+                                            <div class="col-6">
+                                                <div><strong>Employee:</strong> {{ $member->NOM }} {{ $member->PRENOM }}</div>
+                                                <div><strong>Date debut:</strong> {{ $demande->DATE_DEBUT->format('Y-m-d') }}</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div><strong>Statut:</strong> 
+                                                    @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
+                                                        En cours
+                                                    @else
+                                                        Prévue
+                                                    @endif
+                                                    ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} jours restants)
+                                                </div>
+                                                <div><strong>Date fin:</strong> {{ $demande->DATE_FIN->format('Y-m-d') }}</div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            @endforeach
                         @endif
                     </div>
                 </div>
-
                 <!-- Calendar Div -->
                 <div class="card border">
                     <div class="card-header">
-                        Calendar
+                        Calendrier des vacances:
                     </div>
                     <div class="card-body">
                         <div id="calendar"></div>
                     </div>
                 </div>
             </div>
-
-            <!-- Third Column: Announcements -->
-            <div class="col-md-4 d-flex flex-column">
-                <!-- Announcement Div -->
-                <div class="card border flex-grow-1">
-                    <div class="card-header">
-                        Announcements
-                    </div>
-                    <div class="card-body">
-                        <!-- Dynamic content for Announcement Div -->
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </x-app-layout>
-
 <style>
     .card-header {
         background-color: #f8f9fa;
@@ -220,11 +219,11 @@
         margin: 0 auto;
     }
     .fc-holiday {
-        background-color: #9195F6 !important;
+        background-color: #435161 !important;
         color: white !important;
     }
     .fc-weekend {
-        background-color: #B7C9F2 !important;
+        background-color: #4A90E2 !important;
         color: white !important;
         position: relative; /* Ensure the custom title is positioned correctly */
     }
@@ -233,7 +232,7 @@
         bottom: 0;
         width: 100%;
         text-align: center;
-        background-color: #B7C9F2;
+        background-color: #4A90E2;
         color: black;
         font-weight: bold;
         padding: 2px 0;
@@ -295,7 +294,7 @@
         const leaveBalanceChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Remaining Leave Balance', 'Leave Days Taken               '],
+                labels: ['Solde annuel restant', 'Solde annuel pris      '],
                 datasets: [{
                     data: [{{ $soldeCongeRestant }}, {{ $joursCongePrisCetteAnnee }}],
                     backgroundColor: ['#4CAF50', '#FF6384'],

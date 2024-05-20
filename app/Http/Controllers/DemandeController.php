@@ -116,9 +116,9 @@ class DemandeController extends Controller
                 if(!$droit2 && $nombreDeJours > $droit1->JOURS_RESTANT){
 
                     throw new Exception("Vous n\'avez pas assez de solde");
-
+ 
                 }elseif ($droit2){
-                    $nombreDeJours -= $droit->JOURS_RESTANT;
+                    $nombreDeJours -= $droit1->JOURS_RESTANT;
                     if($nombreDeJours > $droit2->JOURS_RESTANT){
                         throw new Exception("Vous n\'avez pas assez de solde");
                     }

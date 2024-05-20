@@ -47,7 +47,9 @@ class DashboardController extends Controller
         ->count();
 
 
-        $soldeAnnee = DroitConge::where('EMPLOYE_ID', $user->MATRICULE)->get();
+        $soldeAnnee = DroitConge::where('EMPLOYE_ID', $userMatricule)
+    ->orderBy('ANNEE', 'desc')
+    ->get();
         //nombre totale de demande de congé acecpter:
         $etapeRHId = Etape::where('nom', 'RH')->value('ID');
 
@@ -92,31 +94,21 @@ class DashboardController extends Controller
         ->get();
 
 //  GET HISTROY WITH STATUT AND ETAPE
-        $userDemandesConges = Demande::with(['statuts' => function($query) {
-            // Fetch the latest status
-            $query->latest()->take(1);
-        }, 'statuts.etape']) // Eager load Etape related to the latest status
-        ->where('EMPLOYE_ID', $userMatricule)
-        ->get();
+$userDemandesConges = Demande::with(['type'])
+    ->where('EMPLOYE_ID', $userMatricule)
+    ->get();
 
-        // Additional processing to filter or manipulate data if necessary
-        $userDemandesConges->each(function ($demande) {
-        $latestStatut = $demande->statuts->first(); // Assuming 'statuts' are ordered latest first
-        if ($latestStatut && $latestStatut->STATUT == 'En Attente') {
-            $demande->latestEtape = $latestStatut->etape;
-        } else {
-            $demande->latestEtape = null;
-        }
-        });
-        
+$userDemandesConges->each(function ($demande) {
+    $latestStatut = $demande->statuts()->orderBy('created_at', 'desc')->first();
+    $demande->latestStatut = $latestStatut ? $latestStatut->STATUT : null;
+    $demande->latestEtape = $latestStatut && $latestStatut->etape ? $latestStatut->etape->NOM : null;
+});
 
 
-        
-        // Assume you want to pass some data to the dashboard view
-     
 
         // Return the dashboard view and pass the data array
         return view('dashboard', [
+            'employe'=>$employe,
             'soldeCongeRestant' => $soldeCongeRestant,
             'totalSoldeCongeRestant' => $totalSoldeCongeRestant,
             'joursCongePrisCetteAnnee' => $joursCongePrisCetteAnnee,
