@@ -144,7 +144,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('employes.update' , $employe->MATRICULE) }}" method="POST" class="row">
+                    <form action="{{ route('employes.store' , $employe->MATRICULE) }}" method="POST" class="row">
                         @csrf
                         @method('PUT')
                         <div class="col-md-6">
@@ -211,18 +211,17 @@
                 <div class="modal-body">
                     <form action="{{ route('employes.store') }}" method="POST" class="row">
                         @csrf
-                        @csrf
                         <div class="col-md-6">
                             <label for="MATRICULE" class="form-label">Matricule</label>
                             <input type="text" class="form-control" id="MATRICULE" name="MATRICULE">
                         </div>
                         <div class="col-md-6">
                             <label for="NOM" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="NOM" name="NOM">
+                            <input type="text" class="form-control" id="NOM" name="NOM" oninput="updateName()">
                         </div>
                         <div class="col-md-6">
                             <label for="PRENOM" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="PRENOM" name="PRENOM">
+                            <input type="text" class="form-control" id="PRENOM" name="PRENOM" oninput="updateName()">
                         </div>
                         <div class="col-md-6">
                             <label for="POSTE" class="form-label">Poste</label>
@@ -278,9 +277,8 @@
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                         </div>
                         <div>
-                            <x-input-label for="name" :value="__('Name')" style="display : none;" />
-                            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" style="display : none;"  />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            <label for="name" class="form-label" style="display: none;">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" style="display: none;">
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary" style="background-color: black;">Enregistrer</button>
@@ -407,6 +405,13 @@
         });
     });
 });
+
+function updateName() {
+        const nom = document.getElementById('NOM').value;
+        const prenom = document.getElementById('PRENOM').value;
+        const name = document.getElementById('name');
+        name.value = `${nom} ${prenom}`;
+    }
 
         </script>
 
