@@ -19,6 +19,7 @@
                             <thead>
                                 <tr>
                                     <th>Numero demande</th>
+                                    <th>Titre</th>
                                     <th>Type</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
@@ -30,6 +31,7 @@
                                 @foreach($demandes as $demande)
                                     <tr>
                                         <td>{{ $demande->ID }}</td>
+                                        <td>{{ $demande->TITRE ?? 'N/A' }}</td>
                                         <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
                                         <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
                                         <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
@@ -64,7 +66,9 @@
                                                                 <strong>Status:</strong> {{ $statut->STATUT }}<br>
                                                                 <strong>Étape:</strong> {{ $statut->etape->NOM ?? 'N/A' }}<br>
                                                                 <strong>Date:</strong> {{ $statut->DATE_DECISION }}<br>
-                                                                <strong>Approbateur:</strong> {{ $statut->approbateur->NOM }} {{ $statut->approbateur->PRENOM }}
+                                                                @if(isset($statut->approbateur))
+    <strong>Approbateur:</strong> {{ $statut->approbateur->NOM }} {{ $statut->approbateur->PRENOM }}
+@endif
                                                             </li>
                                                         @endforeach
                                                     </ul>

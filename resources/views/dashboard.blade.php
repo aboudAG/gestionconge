@@ -177,12 +177,14 @@
                                                 <div><strong>Statut:</strong> 
                                                     @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
                                                         En cours
+                                                        ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} jours restants)
                                                     @else
                                                         Prévue
                                                     @endif
-                                                    ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} jours restants)
+                                                    
                                                 </div>
                                                 <div><strong>Date fin:</strong> {{ $demande->DATE_FIN->format('Y-m-d') }}</div>
+                                                <div><strong>Congé:</strong> {{ $demande->type->NOM }}</div>
                                             </div>
                                         </div>
                                     @endif

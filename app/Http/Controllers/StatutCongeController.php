@@ -19,6 +19,7 @@ class StatutCongeController extends Controller
         ->with('statuts.etape')
         ->orderBy('DATE_DEBUT', 'desc')
         ->get();
+      
 
             return view('statutsconges.index', compact('demandes'));
         }
