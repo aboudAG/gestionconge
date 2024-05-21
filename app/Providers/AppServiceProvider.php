@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Providers;
-
+use App\Models\Demande;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\DemandeCongeObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Demande::observe(DemandeCongeObserver::class);
     }
 }

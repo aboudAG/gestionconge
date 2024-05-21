@@ -14,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\EmployeCreated;
 
 
 
@@ -90,6 +91,7 @@ class EmployeController extends Controller
          ]);
 
         event(new Registered($user));
+
 
         // Redirige l'utilisateur vers une page appropriée après la création
         return redirect()->route('admindash')->with('success', 'Employé créé avec succès.');

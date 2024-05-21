@@ -31,6 +31,10 @@ class Employe extends Model
         return $this->belongsTo(Structure::class, 'STRUCTURE_ID','ID');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'MATRICULE', 'MATRICULE');
+    }
     public function role()
     {
         return $this->belongsTo(Role::class, 'ROLE_ID');

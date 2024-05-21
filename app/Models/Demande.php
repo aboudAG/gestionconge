@@ -46,6 +46,11 @@ class Demande extends Model
     {
         return $this->hasMany(Etape::class, 'DEMANDE_CONGE_ID', 'ID');
     }
+    public function remplacant()
+    {
+        return $this->belongsTo(Employe::class, 'EMPLOYE_REMPLACEMENT_ID', 'MATRICULE');
+    }
+
 
 
     public function currentEtape()

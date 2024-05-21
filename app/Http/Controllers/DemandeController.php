@@ -127,7 +127,7 @@ class DemandeController extends Controller
                 // Créer une nouvelle entrée dans la table statut_conges
                 $statutConge = StatutConge::create([
                     'ID' => null,
-                    'DEMANDE_CONGE_ID' => $demande->id,
+                    'DEMANDE_CONGE_ID' => $demande->ID,
                     'STATUT' => 'En Attente',
                     'APPROUVEUR_ID' => null,
                     'DATE_DECISION' => now(),
@@ -140,7 +140,7 @@ class DemandeController extends Controller
                 // $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
                 // $nombreDeJours -= $droit->JOURS_RESTANT;
                 $exercice = Exercice::create([  
-                    'DEMANDE_CONGE_ID' => $demande->id,
+                    'DEMANDE_CONGE_ID' => $demande->ID,
                     'DROIT_AU_CONGE_ID' => $droit1->ID,
                 ]);
 

@@ -14,6 +14,7 @@ class Exercice extends Model
     protected $fillable = [
         'DEMANDE_CONGE_ID',
         'DROIT_AU_CONGE_ID',
+        'JOURS_PRIS',
         // autres champs remplissables
     ];
 

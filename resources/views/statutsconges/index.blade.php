@@ -19,10 +19,11 @@
                             <thead>
                                 <tr>
                                     <th>Numero demande</th>
+                                    <th>Date creation </th>
                                     <th>Titre</th>
                                     <th>Type</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
+                                    <th>Date debut</th>
+                                    <th>Date fin</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -31,6 +32,7 @@
                                 @foreach($demandes as $demande)
                                     <tr>
                                         <td>{{ $demande->ID }}</td>
+                                        <td>{{ $demande->created_at->format('Y-m-d') ?? 'N/A' }}</td>
                                         <td>{{ $demande->TITRE ?? 'N/A' }}</td>
                                         <td>{{ $demande->type->NOM ?? 'N/A' }}</td>
                                         <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>

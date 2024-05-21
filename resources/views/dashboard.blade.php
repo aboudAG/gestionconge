@@ -93,7 +93,7 @@
                 <!-- History Div -->
                 <div class="card border">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <span>Historique de mes demandes:</span>
+                        <span>Historique des mes demandes:</span>
                         <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
                     </div>
                     <div class="card-body">

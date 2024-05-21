@@ -22,8 +22,56 @@ public function show($id)
     {
         $demande = Demande::with(['employe.structure', 'statuts'])
                         ->findOrFail($id);
+                       
+        //SOLDE
+        $soldeCongeRestant = DroitConge::where('EMPLOYE_ID', $demande->employe->MATRICULE)
+                                          ->get();
+        
+        $exerciceData = Exercice::where('DEMANDE_CONGE_ID',$demande->ID)
+        ->get();
+       
+                                        
 
-        return view('decisiondemande.show', compact('demande'));
+
+       // dd($exerciceData);  
+                       
+        $userDemandesConges = Demande::with(['type'])
+                        ->where('EMPLOYE_ID', $demande->employe->MATRICULE)
+                        ->get();
+                    
+                    $userDemandesConges->each(function ($demande) {
+                        $latestStatut = $demande->statuts()->orderBy('created_at', 'desc')->first();
+                        $demande->latestStatut = $latestStatut ? $latestStatut->STATUT : null;
+                        $demande->latestEtape = $latestStatut && $latestStatut->etape ? $latestStatut->etape->NOM : null;
+                    });
+
+
+
+        $etapeRHId = Etape::where('nom', 'RH')->value('ID');
+        $teamMembersOnLeave = Employe::where('STRUCTURE_ID', $demande->employe->STRUCTURE_ID)
+        ->whereHas('demandes.statuts', function($query) use ($etapeRHId) {
+            $query->where('ETAPE_ID', $etapeRHId)
+                  ->where('STATUT', 'Accepter');
+        })
+        ->with(['demandes' => function($query) use ($etapeRHId) {
+            $query->whereHas('statuts', function($subQuery) use ($etapeRHId) {
+                $subQuery->where('ETAPE_ID', $etapeRHId)
+                         ->where('STATUT', 'Accepter');
+            });
+        }])
+        ->get();
+        
+  
+  
+  
+
+            return view('decisiondemande.show', [
+                'demande' => $demande,
+                'teamMembersOnLeave' => $teamMembersOnLeave,
+                'userDemandesConges' => $userDemandesConges,
+                'soldeCongeRestant' => $soldeCongeRestant,
+                'exerciceData' => $exerciceData
+            ]);
     }
 
 
@@ -63,7 +111,7 @@ public function show($id)
                             'STATUT' => 'En Attente',
                             'DEMANDE_CONGE_ID' => $demande->ID,
                             'COMMENTAIRE' => '',
-                            'APPROUVEUR_ID' => $approvuerId,
+                            'APPROUVEUR_ID' => null,
                             'DATE_DECISION' => now(),
                         ]);
                     }

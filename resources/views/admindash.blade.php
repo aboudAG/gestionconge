@@ -167,7 +167,11 @@
                     <td>{{ $employee->MATRICULE }}</td>
                     <td>{{ $employee->NOM }}</td>
                     <td>{{ $employee->PRENOM }}</td>
-                    <td>{{ $employee->email }}</td>
+                    <td> @isset($employee->user->email)
+                        {{ $employee->user->email }}
+                    @else
+                        NULL
+                    @endisset</td>
                     <td>{{ $employee->POSTE }}</td>
                     <td>{{ $employee->DATE_EMBAUCHE }}</td>
                     <td class="action-buttons">

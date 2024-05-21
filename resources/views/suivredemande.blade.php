@@ -14,6 +14,7 @@
                     Information de la Demande
                 </div>
                 <div class="card-body">
+                    <p><strong>Numero demande:</strong> {{ $currentLeaveRequest->ID }}</p>
                     <p><strong>Type de Demande:</strong> {{ $currentLeaveRequest->type->NOM }}</p>
                     <p><strong>Date de dépot:</strong> {{ $currentLeaveRequest->DATE_CREATION }}</p>
                     <p><strong>Date de Début:</strong> {{ $currentLeaveRequest->DATE_DEBUT->format('Y-m-d') }}</p>
@@ -37,18 +38,24 @@
             @endif
 
             @if($completedStages->isNotEmpty())
-                <div class="card mb-4 border">
-                    <div class="card-header bg-success text-white">
-                        Étapes Terminées
-                    </div>
-                    <div class="card-body">
-                        @foreach($completedStages as $stage)
+            <div class="card mb-4 border">
+                <div class="card-header bg-success text-white">
+                    Étapes Terminées
+                </div>
+                <div class="card-body">
+                    @foreach($completedStages as $stage)
+                        <div class="mb-3">
                             <p><strong>Étape:</strong> {{ $stage->etape->NOM }}</p>
                             <p><strong>Date de Décision:</strong> {{ $stage->DATE_DECISION }}</p>
                             <p><strong>Approbateur:</strong> {{ $stage->approbateur->NOM }} {{ $stage->approbateur->PRENOM }}</p>
-                        @endforeach
-                    </div>
+                            @if (!$loop->last)
+                                <hr>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
+            </div>
+            
             @endif
         @endif
     </div>

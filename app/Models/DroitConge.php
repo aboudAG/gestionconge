@@ -29,4 +29,9 @@ class DroitConge extends Model
     {
         return $this->belongsTo(Employe::class, 'EMPLOYE_ID');
     }
+
+    public function exercices()
+    {
+        return $this->hasMany(Exercice::class, 'DROIT_AU_CONGE_ID');
+    }
 }
