@@ -92,7 +92,7 @@ class EmployeController extends Controller
         event(new Registered($user));
 
         // Redirige l'utilisateur vers une page appropriée après la création
-        return redirect()->route('employes.index')->with('success', 'Employé créé avec succès.');
+        return redirect()->route('admindash')->with('success', 'Employé créé avec succès.');
     }
 
     public function edit($ID)

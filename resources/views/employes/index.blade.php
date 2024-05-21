@@ -95,9 +95,9 @@
                     <div class = "container">
                         <div class="d-flex justify-content-between align-items-center">
                             <h3 class="text-lg font-semibold mb-4">Liste des Employes</h3>
-                    <button type="button" class="btn btn-black" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" style="margin-bottom: 10px; background-color : gray; color:white;  ">
+                    {{-- <button type="button" class="btn btn-black" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" style="margin-bottom: 10px; background-color : gray; color:white;  ">
                         Ajouter un Employé
-                    </button>
+                    </button> --}}
                         </div>
 
                     </div>
@@ -113,7 +113,7 @@
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'embauche</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Structure</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                {{-- <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -126,16 +126,16 @@
                 <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->DATE_EMBAUCHE }}</td>
                 <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->structure->NOM }}</td>
                 <td class = " px-6 py-4 whitespace-nowrap">{{ $employe->role->NOM }}</td>
-                <td class = " px-6 py-4 whitespace-nowrap">
+                {{-- <td class = " px-6 py-4 whitespace-nowrap">
                     <a href="{{ route('employes.edit', $employe->MATRICULE) }}" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#updateEmployeeModal{{$employe->MATRICULE}}" >Modifier</a>
                     <form action="{{ route('employes.destroy', $employe->MATRICULE) }}" method="POST" style="display: inline;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Supprimer</button>
                     </form>
-                </td>
+                </td> --}}
             </tr>
-
+{{--
         <div class="modal fade" id="updateEmployeeModal{{$employe->MATRICULE}}" tabindex="-1" aria-labelledby="updateEmployeeModalLabel{{$employe->MATRICULE}}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -190,7 +190,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
             @endforeach
         </tbody>
     </table>
@@ -199,7 +199,7 @@
 </div>
 </div>
 </div>
-
+{{--
     <!-- Modale -->
     <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -287,7 +287,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     <!-- Modale -->
     {{-- <div class="modal fade" id="updateEmployeeModal" tabindex="-1" aria-labelledby="updateEmployeeModalLabel" aria-hidden="true">

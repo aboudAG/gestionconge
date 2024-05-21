@@ -56,7 +56,7 @@ class StructureController extends Controller
         $structure->CHEMIN = trim($parentChemin . $structure->id, '/');
         $structure->save();
 
-        return redirect()->route('structures.index')->with('success', 'Structure ajoutée avec succès.');
+        return redirect()->route('admindash')->with('success', 'Structure ajoutée avec succès.');
     }
     /**
  * Show the form for editing the specified role.
