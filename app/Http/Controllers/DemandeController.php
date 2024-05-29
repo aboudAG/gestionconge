@@ -13,6 +13,7 @@ use App\Models\Demande;
 Use App\Models\Exercice;
 use App\Models\StatutConge;
 use App\Models\DroitConge;
+use App\Models\Notification;
 use Carbon\Carbon;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
@@ -92,9 +93,43 @@ class DemandeController extends Controller
                   throw new Exception("Aucune étape trouvée pour le type de structure spécifié");
               }
 
+              $employesStructure = Employe::where('STRUCTURE_ID', $employe->STRUCTURE_ID)->get();
 
 
+              $chefs = null;
+              foreach ($employesStructure as $employeStructure) {
+                  $chefStructure = null;
+                  $role = null;
 
+                  switch ($employeStructure->structure->TYPE) {
+                      case 'Service':
+                          $role = 1;
+                          break;
+                      case 'Departement':
+                          $role = 2;
+                          break;
+                      case 'Direction':
+                          $role = 3;
+                          break;
+                      case 'RH':
+                          $role = 5;
+                          break;
+                      default:
+                          // Gérer le cas par défaut si le type de structure n'est pas reconnu
+                          break;
+                  }
+
+                  if ($role) {
+                      // Rechercher le chef de la structure par son rôle
+                      $chefStructure = Employe::where('STRUCTURE_ID', $employeStructure->STRUCTURE_ID)
+                          ->where('ROLE_ID', $role)
+                          ->first();
+
+                      if ($chefStructure) {
+                          $chefs = $chefStructure;
+                      }
+                  }
+              }
 
             // Commencer une transaction de base de données
             DB::beginTransaction();
@@ -132,7 +167,11 @@ class DemandeController extends Controller
                     ]);
                 }
 
-
+                $notif = Notification::create([
+                    'MESSAGE' => 'Vous avez une nouvelle demande en attente',
+                    'EMPLOYE_ID' => $chefs->MATRICULE,
+                    'DATE_ENVOIE' => now(),
+                ]);
 
                 $droit1 = DroitConge::where('ANNEE', $request->year1)->first();
                 $droit2 = DroitConge::where('ANNEE', $request->year2)->first();

@@ -12,6 +12,7 @@ use App\Http\Controllers\DemandeCongeDecisionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SuivreDemandeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TelechargerDemandeController;
 use App\Http\Controllers\AdminDashController;
 use Illuminate\Support\Facades\Route;
@@ -90,3 +91,4 @@ Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'de
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
 Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');
 
+Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;

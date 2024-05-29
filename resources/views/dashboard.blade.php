@@ -196,7 +196,7 @@
                     </div>
                 </div>
 
-                 {{-- demandes en attente --}}
+                {{-- demandes en attente --}}
 
 
 
@@ -212,7 +212,7 @@
 
                  @endif
 
-                 {{-- <div class="card mb-4 border">
+                 <div class="card mb-4 border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Notifications:</span>
                     </div>
@@ -238,8 +238,8 @@
                         @endif
 
 
-                    </div> --}}
-                {{-- </div> --}}
+                    </div>
+                </div>
 
 
                 <!-- Calendar Div -->
