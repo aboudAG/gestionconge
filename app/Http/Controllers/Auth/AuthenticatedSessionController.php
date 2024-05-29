@@ -27,16 +27,15 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->validate([
-            'MATRICULE' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
         // Tente de connecter l'utilisateur avec la matricule, l'email et le mot de passe fournis
-        if (Auth::attempt($request->only('MATRICULE', 'email', 'password'), $request->filled('remember'))) {
+        if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
             $request->session()->regenerate();
 
-           
+
         }
 
         throw ValidationException::withMessages([

@@ -90,6 +90,8 @@ class EmployeController extends Controller
              'MATRICULE' => $request->MATRICULE,
          ]);
 
+        //  dd($user->notify(new EmployeCreated('MATRICULE', 'password')));
+
         event(new Registered($user));
 
 

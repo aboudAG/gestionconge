@@ -45,6 +45,11 @@ class Employe extends Model
         return $this->hasMany(Demande::class, 'EMPLOYE_ID', 'MATRICULE');
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'EMPLOYE_ID', 'MATRICULE');
+    }
+
     public function droitConges()
     {
         return $this->hasMany(DroitConge::class, 'EMPLOYE_ID', 'MATRICULE');

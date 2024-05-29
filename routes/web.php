@@ -89,3 +89,4 @@ Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'de
 
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
 Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');
+

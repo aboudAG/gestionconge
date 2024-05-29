@@ -24,17 +24,19 @@
             <!-- Détails de la demande de congé -->
             <div class="card flex-fill mr-3">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    
+
                     <h5>Détails de la demande de congé</h5>
-                    
+
                     @if($exerciceData->isNotEmpty())
-                    
+
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exerciceModal">
                             Voir Exercice Choisi
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm " data-toggle="modal" data-target="#exerciceModal">
-                            Justificatif
-                        </button>
+                        @if ($demande->JUSTIFICATIF)
+                        <button type="button" class="btn btn-primary btn-sm" data-justificatif="{{ asset('public\justificatifs/' . $demande->JUSTIFICATIF) }}" onclick="openJustificatif(this)">Justificatif</button>
+
+                        @endif
+
                     @endif
                 </div>
                 <div class="card-body">
@@ -124,7 +126,7 @@
                 @php
                     $hasFutureLeaves = false;
                 @endphp
-                
+
                 @foreach($teamMembersOnLeave as $member)
                     @foreach($member->demandes as $demande)
                         @if($demande->DATE_FIN->isFuture())
@@ -149,7 +151,7 @@
                                         <div><strong>Date début:</strong> {{ $demande->DATE_DEBUT->format('Y-m-d') }}</div>
                                     </div>
                                     <div class="col-6">
-                                        <div><strong>Statut:</strong> 
+                                        <div><strong>Statut:</strong>
                                             @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
                                                 En cours
                                                 ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} jours restants)
@@ -237,7 +239,7 @@
         <!-- Include Bootstrap JS and jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        
+
         <script>
             function setDecision(decision) {
                 document.getElementById('decisionInput').value = decision;
@@ -259,6 +261,12 @@
                 }
                 document.getElementById('decisionForm').submit();
             }
+
+            function openJustificatif(button) {
+                var justificatifPath = button.getAttribute('data-justificatif');
+                window.open(justificatifPath, '_blank');
+            }
+
         </script>
     </div>
 </x-app-layout>

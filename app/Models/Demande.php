@@ -16,6 +16,7 @@ class Demande extends Model
         'EMPLOYE_ID',
         'TYPE_DEMANDE',
         'TITRE',
+        'JUSTIFICATIF',
         'DATE_DEBUT',
         'DATE_FIN',
         'EMPLOYE_REMPLACEMENT_ID',
@@ -66,17 +67,26 @@ class Demande extends Model
         return null;
     }
 
-   
+
         public function getNextEtape($currentEtape) {
             $progression = [
                 'Service' => 'Departement',
                 'Departement' => 'Direction',
                 'Direction' => 'RH',
-                
+
             ];
-    
+
             return $progression[$currentEtape] ?? null;
         }
+
+//         public function getNombreDemandesEnAttente($structureId)
+// {
+//     return Demande::whereHas('employe', function ($query) use ($structureId) {
+//         $query->where('STRUCTURE_ID', $structureId);
+//     })->whereHas('statuts', function ($query) {
+//         $query->where('STATUT', 'En Attente');
+//     })->count();
+// }
     }
 
 

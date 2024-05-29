@@ -13,7 +13,7 @@
                 <!-- Information Div -->
                 <div class="card mb-4 border">
                     <div class="card-header">
-                        Informations:    
+                        Informations:
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -27,14 +27,14 @@
                                     <li class="list-group-item"><strong>Structure:</strong> {{ $employe->structure->NOM }}</li>
                                 </ul>
                             </div>
-                            
+
                             <!-- Chart Container -->
                             <div class="col-md-4 d-flex align-items-center justify-content-center">
                                 <div class="chart-container">
                                     <canvas id="leaveBalanceChart"></canvas>
                                 </div>
                             </div>
-                
+
                             <!-- Total Remaining Leave Balance -->
                             <div class="col-md-4">
                                 <ul class="list-group list-group-flush ml-4">
@@ -45,7 +45,7 @@
                                 </ul>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-4">
                             <!-- Total Leave Requests -->
                             <div class="col-6 mb-4">
@@ -91,6 +91,7 @@
                     </div>
                 </div>
                 <!-- History Div -->
+
                 <div class="card border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Historique des mes demandes:</span>
@@ -142,6 +143,7 @@
             <!-- Second Column: Team Info and Calendar -->
             <div class="col-md-6">
                 <!-- Team Info Div -->
+                @if($employe->ROLE_ID != 7)
                 <div class="card mb-4 border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Plan de congé de l'équipe:</span>
@@ -151,7 +153,7 @@
                         @php
                             $hasFutureLeaves = false;
                         @endphp
-                        
+
                         @foreach($teamMembersOnLeave as $member)
                             @foreach($member->demandes as $demande)
                                 @if($demande->DATE_FIN->isFuture())
@@ -161,7 +163,7 @@
                                 @endif
                             @endforeach
                         @endforeach
-            
+
                         @if(!$hasFutureLeaves)
                             <p class="text-muted">No team members are currently on leave or have upcoming leave planned.</p>
                         @else
@@ -174,14 +176,14 @@
                                                 <div><strong>Date debut:</strong> {{ $demande->DATE_DEBUT->format('Y-m-d') }}</div>
                                             </div>
                                             <div class="col-6">
-                                                <div><strong>Statut:</strong> 
+                                                <div><strong>Statut:</strong>
                                                     @if (now()->between($demande->DATE_DEBUT, $demande->DATE_FIN))
                                                         En cours
                                                         ({{ now()->diffInDays($demande->DATE_FIN) + 1 }} jours restants)
                                                     @else
                                                         Prévue
                                                     @endif
-                                                    
+
                                                 </div>
                                                 <div><strong>Date fin:</strong> {{ $demande->DATE_FIN->format('Y-m-d') }}</div>
                                                 <div><strong>Congé:</strong> {{ $demande->type->NOM }}</div>
@@ -193,6 +195,53 @@
                         @endif
                     </div>
                 </div>
+
+                 {{-- demandes en attente --}}
+
+
+
+                        <div class="card mb-4 border">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span>demandes en attente:</span>
+                                <a href="{{ route('listedemandes.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
+                            </div>
+                            <div class="card-body">
+                                <p>Nombre de demandes en attente : {{ $count}} </p>
+                            </div>
+                        </div>
+
+                 @endif
+
+                 {{-- <div class="card mb-4 border">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Notifications:</span>
+                    </div>
+                    <div class="card-body">
+                        @if ($employe->notifications)
+                            @foreach ($employe->notifications as $notif )
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="mb-0">{{$notif->MESSAGE}} le {{$notif->DATE_ENVOIE}}</p>
+                                </div>
+                                <div>
+                                    <form action="{{ route('notifications.destroy', $notif->ID) }}" method="POST" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-primary btn-sm">lu</button>
+                                    </form>
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
+                        @if ($employe->notifications == false)
+                        <p>vous n'avez pas de notification</p>
+                        @endif
+
+
+                    </div> --}}
+                {{-- </div> --}}
+
+
                 <!-- Calendar Div -->
                 <div class="card border">
                     <div class="card-header">
