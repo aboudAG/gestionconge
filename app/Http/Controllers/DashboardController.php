@@ -25,6 +25,7 @@ class DashboardController extends Controller
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
+
         $employe = Employe::find($user->MATRICULE);
         $holidays = JourFerie::all();
 
@@ -105,6 +106,8 @@ $userDemandesConges->each(function ($demande) {
     $demande->latestStatut = $latestStatut ? $latestStatut->STATUT : null;
     $demande->latestEtape = $latestStatut && $latestStatut->etape ? $latestStatut->etape->NOM : null;
 });
+
+
 
 
 

@@ -25,15 +25,24 @@ class Structure extends Model
         'UPDATED_AT',
     ];
 
-    public function parent()
-    {
-        return $this->belongsTo(Structure::class, 'PARENT_ID');
-    }
-
+   
 
 
     public function employes()
     {
         return $this->hasMany(Employe::class, 'STRUCTURE_ID');
     }
+
+    public function parent()
+    {
+        return $this->belongsTo(Structure::class, 'PARENT_ID');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Structure::class, 'PARENT_ID', 'ID');
+    }
+   
 }
+
+

@@ -29,10 +29,7 @@ public function show($id)
         
         $exerciceData = Exercice::where('DEMANDE_CONGE_ID',$demande->ID)
         ->get();
-       
-                                        
-
-
+                                
        // dd($exerciceData);  
                        
         $userDemandesConges = Demande::with(['type'])
@@ -82,14 +79,14 @@ public function show($id)
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
-
+    
         $demande = Demande::findOrFail($id);
         $currentStatut = $demande->statuts()->where('STATUT', 'En Attente')->firstOrFail();
         $decision = $request->input('decision');
         $commentaire = $request->input('comment');
         $approvuerId = $user->MATRICULE;
-
-        DB::transaction(function () use ($demande, $currentStatut, $decision, $commentaire, $approvuerId) {
+    
+        DB::transaction(function () use ($demande, $currentStatut, $decision, $commentaire, $approvuerId, $user) {
             // Update the current statut using Query Builder
             DB::table('statut_conge')
                 ->where('id', $currentStatut->ID)
@@ -99,7 +96,7 @@ public function show($id)
                     'APPROUVEUR_ID' => $approvuerId,
                     'DATE_DECISION' => now(),
                 ]);
-
+    
             if ($decision === 'Accepter') {
                 $nextEtapeNom = $demande->getNextEtape($currentStatut->etape->NOM);
                 if ($nextEtapeNom) {
@@ -115,8 +112,8 @@ public function show($id)
                             'DATE_DECISION' => now(),
                         ]);
                     }
-                }
-                else{
+                } else {
+                    // Final approval step
                     $dateDebut = Carbon::parse($demande->DATE_DEBUT);
                     $dateFin = Carbon::parse($demande->DATE_FIN);
                     $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
@@ -127,13 +124,13 @@ public function show($id)
                         $droitConge = $exercice->droitConge;
                         $JOURS_RESTANT = $droitConge->JOURS_RESTANT - $nombreDeJours;
                         DroitConge::where('ID', $droitConge->ID)->update([
-                                'JOURS_RESTANT' => $JOURS_RESTANT,
-                                'JOURS_PRIS' => $nombreDeJours,
+                            'JOURS_RESTANT' => $JOURS_RESTANT,
+                            'JOURS_PRIS' => $nombreDeJours,
                         ]);
-                    } else{
+                    } else {
                         $premierExercice = $exercices[0];
                         $secondExercice = $exercices[1];
-
+    
                         // Récupérer les DroitConge associés
                         $premierDroit = $premierExercice->droitConge;
                         $secondDroit = $secondExercice->droitConge;
@@ -144,19 +141,29 @@ public function show($id)
                         DroitConge::where('ID', $premierDroit->ID)->update([
                             'JOURS_RESTANT' => 0,
                             'JOURS_PRIS' => 30,
-                    ]);
+                        ]);
                         $JOURS_RESTANT = $secondDroit->JOURS_RESTANT - $nombreDeJours;
                         DroitConge::where('ID', $secondDroit->ID)->update([
                             'JOURS_RESTANT' => $JOURS_RESTANT,
                             'JOURS_PRIS' => $nombreDeJours,
-                    ]);
+                        ]);
                     }
-
+    
+                    // Check if the employee going on leave has a role that needs delegation
+                    $employe = $demande->employe;
+                    if (in_array($employe->role->NOM, ['Chef de service', 'Chef de departement', 'Directeur'])) {
+                        DB::table('delegation_role')->insert([
+                            'EMPLOYE_ID' => $demande->EMPLOYE_REMPLACEMENT_ID,
+                            'DATE_DEBUT' => $demande->DATE_DEBUT,
+                            'DATE_FIN' => $demande->DATE_FIN,
+                            'EMPLOYE_DELEGUEUR_ID' => $employe->MATRICULE,
+                            'ROLE_ID' => $employe->ROLE_ID,
+                        ]);
+                    }
                 }
             }
-
         });
-
+    
         return redirect()->route('listedemandes.index')->with('success', 'Décision enregistrée avec succès.');
     }
 }

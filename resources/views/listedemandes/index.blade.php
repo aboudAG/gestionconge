@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Liste de demande de congés en attente') }}
+            {{ $delegated ? __('Liste des demandes déléguer en attente') : __('Liste de demande de congés en attente') }}
         </h2>
     </x-slot>
 
