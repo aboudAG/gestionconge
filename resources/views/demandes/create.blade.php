@@ -18,7 +18,7 @@
             background-color: #d4edda;
             color: #155724;
         }
-        
+
         .alert {
             animation: fadeIn 0.5s;
         }
@@ -157,7 +157,7 @@
         </div>
         <div id="calendar" class="mb-4"></div>
 
-        <form action="{{ route('demandes.store') }}" method="POST" id="leaveRequestForm" class="p-4 bg-white shadow-lg rounded-lg">
+        <form action="{{ route('demandes.store') }}" method="POST" enctype="multipart/form-data" id="leaveRequestForm" class="p-4 bg-white shadow-lg rounded-lg" >
             @csrf
             <div class="row mb-3">
                 <div class="col-md-6">

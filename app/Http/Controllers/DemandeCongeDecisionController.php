@@ -22,20 +22,23 @@ public function show($id)
     {
         $demande = Demande::with(['employe.structure', 'statuts'])
                         ->findOrFail($id);
-                       
+
         //SOLDE
         $soldeCongeRestant = DroitConge::where('EMPLOYE_ID', $demande->employe->MATRICULE)
                                           ->get();
-        
+
         $exerciceData = Exercice::where('DEMANDE_CONGE_ID',$demande->ID)
         ->get();
-                                
-       // dd($exerciceData);  
-                       
+
+
+
+
+       // dd($exerciceData);
+
         $userDemandesConges = Demande::with(['type'])
                         ->where('EMPLOYE_ID', $demande->employe->MATRICULE)
                         ->get();
-                    
+
                     $userDemandesConges->each(function ($demande) {
                         $latestStatut = $demande->statuts()->orderBy('created_at', 'desc')->first();
                         $demande->latestStatut = $latestStatut ? $latestStatut->STATUT : null;
@@ -57,17 +60,18 @@ public function show($id)
             });
         }])
         ->get();
-        
-  
-  
-  
+
+
+
+
 
             return view('decisiondemande.show', [
                 'demande' => $demande,
                 'teamMembersOnLeave' => $teamMembersOnLeave,
                 'userDemandesConges' => $userDemandesConges,
                 'soldeCongeRestant' => $soldeCongeRestant,
-                'exerciceData' => $exerciceData
+                'exerciceData' => $exerciceData,
+                'justificatifPath' => 'public\justificatifs\\' . $demande->JUSTUFICATIF
             ]);
     }
 

@@ -49,6 +49,10 @@ class Employe extends Model
     {
         return $this->hasMany(DelegationRole::class, 'EMPLOYE_ID', 'MATRICULE');
     }
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'EMPLOYE_ID', 'MATRICULE');
+    }
 
     public function droitConges()
     {

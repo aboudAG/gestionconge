@@ -6,6 +6,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
+                    
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
@@ -25,14 +26,18 @@
                     <x-nav-link :href="route('statutsconges.index')" :active="request()->routeIs('statutsconges.index')">
                         {{ __('Historique des demandes') }}
                     </x-nav-link>
+                    @php
+                        $user = Auth::user();
+                    @endphp
+                    @if($user->employe->ROLE_ID != 7)
                     <x-nav-link :href="route('listedemandes.index')" :active="request()->routeIs('listedemandes.index')">
                         {{ __('Liste des demandes de congés') }}
                     </x-nav-link>
-                    @if($activeDelegationRoles > 0)
+                    @endif                    @if($activeDelegationRoles > 0)
                         <x-nav-link :href="route('delegated.demandes')" :active="request()->routeIs('delegated.demandes')">
                             {{ __('Consulter les demandes déléguer') }}
                         </x-nav-link>
-                    @endif
+    @endif
                     
                 </div>
             </div>
@@ -47,7 +52,10 @@
                     <x-slot name="trigger">
                         <button class="inline-flex items-center text-sm leading-4 font-medium text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150 p-0 border-0" style="flex-direction:column;">
                             <div>{{ Auth::user()->MATRICULE }}</div>
-                            <div>{{ Auth::user()->employe->PRENOM }} {{ Auth::user()->employe->NOM }}</div>
+                            <div>{{ Auth::user()->name }} </div>
+                           
+                        
+
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -92,6 +100,7 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+           
             </x-responsive-nav-link>
 
             <!-- Add New Option -->

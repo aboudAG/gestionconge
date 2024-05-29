@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Employe;
-use App\Models\DroitConge; 
+use App\Models\DroitConge;
 use App\Models\Demande;
 use App\Models\Etape;
 use App\Models\JourFerie;
 use App\Models\StatutConge;
+use App\Models\Structure;
+use App\Models\Role;
 use Carbon\Carbon;
 
 
@@ -110,7 +112,6 @@ $userDemandesConges->each(function ($demande) {
 
 
 
-
         // Return the dashboard view and pass the data array
         return view('dashboard', [
             'employe'=>$employe,
@@ -124,8 +125,10 @@ $userDemandesConges->each(function ($demande) {
             'userDemandesConges' => $userDemandesConges,
             'teamMembersOnLeave' =>  $teamMembersOnLeave,
             'holidays' => $holidays,
-            'soldeAnnee' => $soldeAnnee
+            'soldeAnnee' => $soldeAnnee,
+           
         ]);
-    
+
     }
-}
+    }
+
