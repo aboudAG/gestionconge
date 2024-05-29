@@ -233,8 +233,8 @@
                             </div>
                             @endforeach
                         @endif
-                        @if ($employe->notifications == false)
-                        <p>vous n'avez pas de notification</p>
+                        @if ($employe->notifications->isEmpty() )
+                            <p>vous n'avez pas de notification</p>
                         @endif
 
 
@@ -253,7 +253,7 @@
                 </div>
             </div>
         </div>
-        
+
     </div>
 </x-app-layout>
 <style>

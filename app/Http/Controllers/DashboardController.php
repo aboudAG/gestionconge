@@ -12,12 +12,18 @@ use App\Models\StatutConge;
 use App\Models\Structure;
 use App\Models\Role;
 use Carbon\Carbon;
+use App\Services\StructureService;
 
 
 
 class DashboardController extends Controller
 {
+    protected $structureService;
 
+    public function __construct(StructureService $structureService)
+    {
+        $this->structureService = $structureService;
+    }
 
     public function index()
     {
@@ -110,7 +116,39 @@ $userDemandesConges->each(function ($demande) {
 });
 
 
+        $structure = Structure::find($employe->STRUCTURE_ID);
+        $role = $employe->role->NOM;
 
+
+
+         switch ($role) {
+             case 'Chef de service':
+                 $demandes = $this->getDemandesForStructure($structure, 'Service');
+                 $count = $demandes->count();
+                 break;
+
+             case 'Chef de departement':
+                 $demandes = $this->getDemandesForStructureHierarchy($structure, 'Departement');
+                 $count = $demandes->count();
+                 break;
+
+             case 'Directeur':
+                 $demandes = $this->getDemandesForStructureHierarchy($structure, 'Direction');
+                 $count = $demandes->count();
+                 break;
+
+             case 'RH':
+                 $demandesrh = Demande::with(['employe.structure'])->get();
+                 $demandes = $demandesrh->filter(function ($demande) {
+                     $currentEtape = $demande->currentEtape();
+                     return $currentEtape && $currentEtape->NOM === 'RH';
+                 });
+                 $count = $demandes->count();
+                 break;
+
+             case 'Employe':
+                $count = null;
+         }
 
         // Return the dashboard view and pass the data array
         return view('dashboard', [
@@ -126,9 +164,43 @@ $userDemandesConges->each(function ($demande) {
             'teamMembersOnLeave' =>  $teamMembersOnLeave,
             'holidays' => $holidays,
             'soldeAnnee' => $soldeAnnee,
-           
+            'count' => $count
+
         ]);
 
     }
-    }
+
+
+     private function getDemandesForStructure($structure, $etapeName)
+     {
+         $demandes = Demande::with(['employe.structure', 'statuts.etape'])
+             ->whereHas('employe.structure', function ($query) use ($structure) {
+                 $query->where('ID', $structure->ID);
+             })
+             ->get();
+
+         return $demandes->filter(function ($demande) use ($etapeName) {
+             $currentEtape = $demande->currentEtape();
+             return $currentEtape && $currentEtape->NOM === $etapeName;
+         });
+     }
+
+     private function getDemandesForStructureHierarchy($structure, $etapeName)
+     {
+         $childStructures = $this->structureService->getAllChildStructures($structure);
+         $childStructureIds = $childStructures->pluck('ID');
+         $childStructureIds->push($structure->ID); // Include the current structure itself
+         $demandes = Demande::with(['employe.structure'])
+             ->whereHas('employe.structure', function ($query) use ($childStructureIds) {
+                 $query->whereIn('ID', $childStructureIds);
+             })
+             ->get();
+
+         return $demandes->filter(function ($demande) use ($etapeName) {
+             $currentEtape = $demande->currentEtape();
+             return $currentEtape && $currentEtape->NOM === $etapeName;
+         });
+     }
+}
+
 
