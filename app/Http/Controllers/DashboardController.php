@@ -27,6 +27,7 @@ class DashboardController extends Controller
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
+
         $employe = Employe::find($user->MATRICULE);
         $holidays = JourFerie::all();
 
@@ -110,106 +111,6 @@ $userDemandesConges->each(function ($demande) {
 
 
 
-//
-
-$EMPLOYESTRUCTURE=$employe->STRUCTURE_ID;
-$role = $employe->role->NOM;
-
-$chefStructureId = $employe->STRUCTURE_ID;
-$chefStructure = Structure::find($chefStructureId);
-
-
-$directeurStructureId = $employe->STRUCTURE_ID; // ID de la structure dirigée par le directeur
-$directeurStructure = Structure::find($directeurStructureId);
-
-
-
-
-switch ($role) {
-    case 'Chef de service':
-        $demandesservice = Demande::with(['employe.structure', 'statuts.etape'])
-        ->whereHas('employe', function ($query) use ($EMPLOYESTRUCTURE) {
-            $query->whereHas('structure', function ($query) use ($EMPLOYESTRUCTURE) {
-                $query->where('id', $EMPLOYESTRUCTURE);
-            });
-        })
-        ->get();
-
-    // Now, filter these demandes to check the current etape using the loaded data.
-    $demandes = $demandesservice->filter(function ($demande) {
-        $currentEtape = $demande->currentEtape();
-        return $currentEtape && $currentEtape->NOM === 'Service';
-    });
-    $count = $demandes->count();
-
-        break;
-
-
-
-
-    case 'Chef de departement':
-        if ($chefStructure && $chefStructure->CHEMIN) {
-            // Retrieve all demandes within the structure hierarchy first
-            $demandesdepartement = Demande::with(['employe.structure'])
-                ->whereHas('employe', function ($query) use ($chefStructure) {
-                    $query->whereHas('structure', function ($query) use ($chefStructure) {
-                        $query->where('CHEMIN', 'LIKE', $chefStructure->CHEMIN . '%');
-                    });
-                })
-                ->get();
-
-            // Filter demandes based on the current etape using the loaded data
-            $demandes = $demandesdepartement->filter(function ($demande) {
-                $currentEtape = $demande->currentEtape();
-                return $currentEtape && $currentEtape->NOM === 'Departement';
-            });
-            $count = $demandes->count();
-        }
-
-        break;
-
-
-
-
-    case 'Directeur':
-        if ($directeurStructure && $directeurStructure->CHEMIN) {
-            // Fetch all demandes within the structure hierarchy
-            $demandesdirecteur = Demande::with(['employe.structure'])
-                ->whereHas('employe', function ($query) use ($directeurStructure) {
-                    $query->whereHas('structure', function ($query) use ($directeurStructure) {
-                        $query->where('CHEMIN', 'LIKE', $directeurStructure->CHEMIN . '%');
-                    });
-                })
-                ->get();
-
-            // Filter the demandes based on the current etape
-            $demandes = $demandesdirecteur->filter(function ($demande) {
-                $currentEtape = $demande->currentEtape();
-                return $currentEtape && $currentEtape->NOM === 'Direction';
-            });
-            $count = $demandes->count();
-        }
-        break;
-
-
-
-    case 'RH':
-        $demandesrh = Demande::with(['employe.structure'])
-        ->get();
-
-    // Filter these demandes to check the current etape using the loaded data.
-        $demandes = $demandesrh->filter(function ($demande) {
-        $currentEtape = $demande->currentEtape();
-        return $currentEtape && $currentEtape->NOM === 'RH';
-        $count = $demandes->count();
-    });
-        break;
-        case 'Employe' :
-
-            $count = NULL ;
-        }
-
-
 
         // Return the dashboard view and pass the data array
         return view('dashboard', [
@@ -225,7 +126,7 @@ switch ($role) {
             'teamMembersOnLeave' =>  $teamMembersOnLeave,
             'holidays' => $holidays,
             'soldeAnnee' => $soldeAnnee,
-            'count' => $count
+           
         ]);
 
     }
