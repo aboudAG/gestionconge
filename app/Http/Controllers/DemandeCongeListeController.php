@@ -32,6 +32,14 @@ class DemandeCongeListeController extends Controller
         // Récupérer l'employé à partir de son matricule
         $employe = Employe::find($user->MATRICULE);
 
+        if($employe->role->NOM == 'Admin'){
+            return redirect()->route('admindash')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
+        if($employe->role->NOM == 'Employe'){
+            return redirect()->route('dashboard')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
         // S'assurer que l'employé existe et a une structure associée
         if (!$employe || !$employe->STRUCTURE_ID) {
             return redirect()->route('login')->withErrors('Employé non trouvé ou structure non assignée.');

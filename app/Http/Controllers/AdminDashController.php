@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Structure;
 use App\Models\Employe;
+use App\Models\Solde;
 use Illuminate\Support\Facades\Auth;
 
 class AdminDashController extends Controller
@@ -16,15 +17,16 @@ class AdminDashController extends Controller
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
-        // $employe = Employe::where('MATRICULE', $user->MATRICULE)->firstOrFail();
+        $employe = Employe::where('MATRICULE', $user->MATRICULE)->firstOrFail();
         // if($employe->role->NOM != 'Admin'){
-        //     return redirect()->route('demandes.create')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        //     return redirect()->route('dashboard')->withErrors('Vous ne pouvez pas acceder a cette page.');
         // }
         $employes = Employe::all();
         $structures = Structure::all();
         $roles = Role::all();
+        $soldes = Solde::all();
 
 
-        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles ]);
+        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles, 'soldes' => $soldes ]);
     }
 }

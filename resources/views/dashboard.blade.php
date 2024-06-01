@@ -31,6 +31,7 @@
                             <!-- Chart Container -->
                             <div class="col-md-4 d-flex align-items-center justify-content-center">
                                 <div class="chart-container">
+                                    <canvas id="leaveStatusChart"></canvas>
                                     <canvas id="leaveBalanceChart"></canvas>
                                 </div>
                             </div>
@@ -227,7 +228,7 @@
                                     <form action="{{ route('notifications.destroy', $notif->ID) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-primary btn-sm">lu</button>
+                                        <button type="submit" class="btn btn-primary btn-sm" style="margin-left: 50px;">lu</button>
                                     </form>
                                 </div>
                             </div>
@@ -341,28 +342,52 @@
             calendar.render();
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('leaveBalanceChart').getContext('2d');
-        const leaveBalanceChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Solde annuel restant', 'Solde annuel pris      '],
-                datasets: [{
-                    data: [{{ $soldeCongeRestant }}, {{ $joursCongePrisCetteAnnee }}],
-                    backgroundColor: ['#4CAF50', '#FF6384'],
-                    hoverBackgroundColor: ['#45A049', '#FF4384']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
+    //     document.addEventListener('DOMContentLoaded', function() {
+    //     const ctx = document.getElementById('leaveBalanceChart').getContext('2d');
+    //     const leaveBalanceChart = new Chart(ctx, {
+    //         type: 'pie',
+    //         data: {
+    //             labels: ['Solde annuel restant', 'Solde annuel pris      '],
+    //             datasets: [{
+    //                 data: [{{ $soldeCongeRestant }}, {{ $joursCongePrisCetteAnnee }}],
+    //                 backgroundColor: ['#4CAF50', '#FF6384'],
+    //                 hoverBackgroundColor: ['#45A049', '#FF4384']
+    //             }]
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             maintainAspectRatio: false,
+    //             plugins: {
+    //                 legend: {
+    //                     position: 'bottom',
+    //                 }
+    //             }
+    //         }
+    //     });
+    // });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('leaveStatusChart').getContext('2d');
+    const leaveStatusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Acceptées', 'Refusées'],
+            datasets: [{
+                data: [{{$nombreDemandesCongeAccepte}}, {{$nombreDemandesCongeRefuse}}],
+                backgroundColor: ['#4CAF50', '#FF6384'],
+                hoverBackgroundColor: ['#45A049', '#FF4384']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
                 }
             }
-        });
+        }
     });
+});
 </script>
 
