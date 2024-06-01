@@ -16,6 +16,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TelechargerDemandeController;
 use App\Http\Controllers\AdminDashController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JourFerieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,5 +93,28 @@ Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'de
 
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
 Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');
+
+
+Route::get('/demande/verify/{id}', function($id) {
+    $demande = App\Models\Demande::find($id);
+    if ($demande) {
+        return view('demandes.verify', compact('demande'));
+    } else {
+        return "Demande non trouvée";
+    }
+})->name('demandes.verify');
+
+Route::get('/jours_feries', [JourFerieController::class, 'index'])->name('jours_feries.index');
+Route::post('/jours_feries', [JourFerieController::class, 'store'])->name('jours_feries.store');
+Route::get('/jours_feries/{id}/edit', [JourFerieController::class, 'edit'])->name('jours_feries.edit');
+Route::put('/jours_feries/{id}', [JourFerieController::class, 'update'])->name('jours_feries.update');
+Route::delete('/jours_feries/{id}', [JourFerieController::class, 'destroy'])->name('jours_feries.destroy');
+
+
+
+
+
+
+
 
 Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;

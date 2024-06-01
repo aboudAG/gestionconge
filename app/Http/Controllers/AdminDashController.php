@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Structure;
 use App\Models\Employe;
+use App\Models\JourFerie;
 use Illuminate\Support\Facades\Auth;
 
 class AdminDashController extends Controller
@@ -18,13 +19,14 @@ class AdminDashController extends Controller
         }
         // $employe = Employe::where('MATRICULE', $user->MATRICULE)->firstOrFail();
         // if($employe->role->NOM != 'Admin'){
-        //     return redirect()->route('demandes.create')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        //     return redirect()->route('demandes.c reate')->withErrors('Vous ne pouvez pas acceder a cette page.');
         // }
         $employes = Employe::all();
         $structures = Structure::all();
         $roles = Role::all();
+        $jours_feries = JourFerie::all(); // Include holidays data
 
 
-        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles ]);
+        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles,'jours_feries' => $jours_feries, ]);
     }
 }

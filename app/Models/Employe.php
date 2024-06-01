@@ -13,6 +13,8 @@ class Employe extends Model
     protected $table = 'employes';
 
     protected $primaryKey = 'MATRICULE';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'NOM',

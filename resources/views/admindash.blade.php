@@ -130,6 +130,8 @@
     <a href="#addEmployee" data-toggle="modal" data-target="#addEmployeeModal">Ajouter Employé</a>
     <a href="#structures">Consulter Structures</a>
     <a href="#addStructure" data-toggle="modal" data-target="#addStructureModal">Ajouter Structure</a>
+    <a href="#holidays">Gérer les jours fériés</a>
+    <a href="#addHolidayModal" data-toggle="modal" data-target="#addHolidayModal">Ajouter Jour ferié</a>
 
 </div>
 
@@ -200,10 +202,6 @@
                     <form action="{{ route('employes.store') }}" method="POST" class="row">
                         @csrf
                         <div class="col-md-6">
-                            <label for="MATRICULE" class="form-label">Matricule</label>
-                            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE">
-                        </div>
-                        <div class="col-md-6">
                             <label for="NOM" class="form-label">Nom</label>
                             <input type="text" class="form-control" id="NOM" name="NOM" oninput="updateName()">
                         </div>
@@ -240,7 +238,7 @@
                             </select>
                         </div>
                         @php
-                            $randomPassword = Illuminate\Support\Str::random(10); // Génération d'un mot de passe
+                            $randomPassword = Illuminate\Support\Str::random(10);
                         @endphp
                         <div class="col-md-6">
                             <label for="password" class="form-label">Password</label>
@@ -264,67 +262,67 @@
     </div>
 
     @foreach($employes as $employee)
-    <!-- Modifier Employé Modal -->
-    <div class="modal fade" id="editEmployeeModal{{ $employee->MATRICULE }}" tabindex="-1" aria-labelledby="editEmployeeModalLabel{{ $employee->MATRICULE }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editEmployeeModalLabel{{ $employee->MATRICULE }}">Modifier Employé</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('employes.update', $employee->MATRICULE) }}" method="POST" class="row">
-                        @csrf
-                        @method('PUT')
-                        <div class="col-md-6">
-                            <label for="MATRICULE" class="form-label">Matricule</label>
-                            <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{ $employee->MATRICULE }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="NOM" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="NOM" name="NOM" value="{{ $employee->NOM }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="PRENOM" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="PRENOM" name="PRENOM" value="{{ $employee->PRENOM }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="POSTE" class="form-label">Poste</label>
-                            <input type="text" class="form-control" id="POSTE" name="POSTE" value="{{ $employee->POSTE }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{ $employee->email }}" required autocomplete="username">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="DATE_EMBAUCHE" class="form-label">Date d'embauche</label>
-                            <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" value="{{ $employee->DATE_EMBAUCHE }}">
-                        </div>
-                        <div class="col-md-6">
-                            <label for="ROLE" class="form-label">Rôle</label>
-                            <select class="form-select" id="ROLE_EDIT{{ $employee->MATRICULE }}" name="ROLE_ID">
-                                @foreach($roles as $role)
-                                <option value="{{ $role->ID }}" {{ $employee->ROLE_ID == $role->ID ? 'selected' : '' }}>{{ $role->NOM }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="STRUCTURE" class="form-label">Structure</label>
-                            <select class="form-select" id="STRUCTURE_EDIT{{ $employee->MATRICULE }}" name="STRUCTURE_ID">
-                                @foreach($structures as $structure)
-                                <option value="{{ $structure->ID }}" {{ $employee->STRUCTURE_ID == $structure->ID ? 'selected' : '' }}>{{ $structure->NOM }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        </div>
-                    </form>
-                </div>
+<!-- Modifier Employé Modal -->
+<div class="modal fade" id="editEmployeeModal{{ $employee->MATRICULE }}" tabindex="-1" aria-labelledby="editEmployeeModalLabel{{ $employee->MATRICULE }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEmployeeModalLabel{{ $employee->MATRICULE }}">Modifier Employé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('employes.update', $employee->MATRICULE) }}" method="POST" class="row">
+                    @csrf
+                    @method('PUT')
+                    <div class="col-md-6">
+                        <label for="MATRICULE" class="form-label">Matricule</label>
+                        <input type="text" class="form-control" id="MATRICULE" name="MATRICULE" value="{{ $employee->MATRICULE }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="NOM" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="NOM" name="NOM" value="{{ $employee->NOM }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="PRENOM" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" id="PRENOM" name="PRENOM" value="{{ $employee->PRENOM }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="POSTE" class="form-label">Poste</label>
+                        <input type="text" class="form-control" id="POSTE" name="POSTE" value="{{ $employee->POSTE }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ isset($employee->user->email) ? $employee->user->email : 'NULL' }}" required autocomplete="username">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="DATE_EMBAUCHE" class="form-label">Date d'embauche</label>
+                        <input type="date" class="form-control" id="DATE_EMBAUCHE" name="DATE_EMBAUCHE" value="{{ $employee->DATE_EMBAUCHE }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ROLE" class="form-label">Rôle</label>
+                        <select class="form-select" id="ROLE_EDIT{{ $employee->MATRICULE }}" name="ROLE_ID">
+                            @foreach($roles as $role)
+                            <option value="{{ $role->ID }}" {{ $employee->ROLE_ID == $role->ID ? 'selected' : '' }}>{{ $role->NOM }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="STRUCTURE" class="form-label">Structure</label>
+                        <select class="form-select" id="STRUCTURE_EDIT{{ $employee->MATRICULE }}" name="STRUCTURE_ID">
+                            @foreach($structures as $structure)
+                            <option value="{{ $structure->ID }}" {{ $employee->STRUCTURE_ID == $structure->ID ? 'selected' : '' }}>{{ $structure->NOM }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    @endforeach
+</div>
+@endforeach
 
     <!-- Consulter Structures -->
     <div id="structures">
@@ -336,7 +334,7 @@
                     <th>Nom</th>
                     <th>Code</th>
                     <th>Type</th>
-                    <th>Parent ID</th>
+                    <th>Chemin</th>
                     <th>Actions</th>
                 </tr>
                 <tr>
@@ -344,7 +342,7 @@
                     <th class="search-column"><input type="text" placeholder="Rechercher Nom"></th>
                     <th class="search-column"><input type="text" placeholder="Rechercher Code"></th>
                     <th class="search-column"><input type="text" placeholder="Rechercher Type"></th>
-                    <th class="search-column"><input type="text" placeholder="Rechercher Parent ID"></th>
+                    <th class="search-column"><input type="text" placeholder="Chemin"></th>
                     <th></th>
                 </tr>
             </thead>
@@ -355,7 +353,7 @@
                     <td>{{ $structure->NOM }}</td>
                     <td>{{ $structure->CODE }}</td>
                     <td>{{ $structure->TYPE }}</td>
-                    <td>{{ $structure->PARENT_ID }}</td>
+                    <td>{{ $structure->path }}</td>
                     <td class="action-buttons">
                         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editStructureModal{{ $structure->ID }}">Modifier</button>
                     </td>
@@ -440,6 +438,112 @@
     </div>
     @endforeach
 
+    <div id="holidays">
+        <h3>Liste des Jours Fériés</h3>
+        <table id="holidaysTable" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Jour Début</th>
+                    <th>Jour Fin</th>
+                    <th>Désignation</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <th class="search-column"><input type="text" placeholder="Rechercher ID"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Jour Début"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Jour Fin"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Désignation"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($jours_feries as $jour_ferie)
+                <tr>
+                    <td>{{ $jour_ferie->ID }}</td>
+                    <td>{{ $jour_ferie->JOUR_DEBUT }}</td>
+                    <td>{{ $jour_ferie->JOUR_FIN ?? '-' }}</td>
+                    <td>{{ $jour_ferie->DESIGNATION }}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editHolidayModal{{ $jour_ferie->ID }}">Modifier</button>
+                        <form action="{{ route('jours_feries.destroy', $jour_ferie->ID) }}" method="POST" style="display:inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <!-- Ajouter Jour Férié Modal -->
+<div class="modal fade" id="addHolidayModal" tabindex="-1" aria-labelledby="addHolidayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addHolidayModalLabel">Nouveau Jour Férié</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('jours_feries.store') }}" method="POST" class="row">
+                    @csrf
+                    <div class="col-md-6">
+                        <label for="JOUR_DEBUT" class="form-label">Jour Début</label>
+                        <input type="date" class="form-control" id="JOUR_DEBUT" name="JOUR_DEBUT" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOUR_FIN" class="form-label">Jour Fin</label>
+                        <input type="date" class="form-control" id="JOUR_FIN" name="JOUR_FIN">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="DESIGNATION" class="form-label">Désignation</label>
+                        <input type="text" class="form-control" id="DESIGNATION" name="DESIGNATION" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@foreach($jours_feries as $jour_ferie)
+<!-- Modifier Jour Férié Modal -->
+<div class="modal fade" id="editHolidayModal{{ $jour_ferie->ID }}" tabindex="-1" aria-labelledby="editHolidayModalLabel{{ $jour_ferie->ID }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editHolidayModalLabel{{ $jour_ferie->ID }}">Modifier Jour Férié</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('jours_feries.update', $jour_ferie->ID) }}" method="POST" class="row">
+                    @csrf
+                    @method('PUT')
+                    <div class="col-md-6">
+                        <label for="JOUR_DEBUT" class="form-label">Jour Début</label>
+                        <input type="date" class="form-control" id="JOUR_DEBUT" name="JOUR_DEBUT" value="{{ $jour_ferie->JOUR_DEBUT }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOUR_FIN" class="form-label">Jour Fin</label>
+                        <input type="date" class="form-control" id="JOUR_FIN" name="JOUR_FIN" value="{{ $jour_ferie->JOUR_FIN }}">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="DESIGNATION" class="form-label">Désignation</label>
+                        <input type="text" class="form-control" id="DESIGNATION" name="DESIGNATION" value="{{ $jour_ferie->DESIGNATION }}" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
@@ -468,6 +572,16 @@
             });
         });
 
+        // Initialiser DataTables pour le tableau des jours fériés avec recherche par colonne
+        var holidaysTable = $('#holidaysTable').DataTable();
+        $('#holidaysTable thead tr:eq(1) th').each(function(i) {
+            $('input', this).on('keyup change', function() {
+                if (holidaysTable.column(i).search() !== this.value) {
+                    holidaysTable.column(i).search(this.value).draw();
+                }
+            });
+        });
+
         // Initialiser Choices.js pour les sélections de rôle et de structure
         new Choices('#ROLE');
         new Choices('#STRUCTURE');
@@ -484,5 +598,6 @@
         name.value = `${nom} ${prenom}`;
     }
 </script>
+
 </body>
 </html>
