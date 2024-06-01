@@ -114,15 +114,7 @@ Route::get('/jours_feries/{id}/edit', [JourFerieController::class, 'edit'])->nam
 Route::put('/jours_feries/{id}', [JourFerieController::class, 'update'])->name('jours_feries.update');
 Route::delete('/jours_feries/{id}', [JourFerieController::class, 'destroy'])->name('jours_feries.destroy');
 
-
-
-
-
-
-
-
-Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;
-
+Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 Route::post('/soldes', [SoldeController::class, 'store'])->name('soldes.store');
 Route::put('/soldes/{id}', [SoldeController::class, 'update'])->name('soldes.update');
 

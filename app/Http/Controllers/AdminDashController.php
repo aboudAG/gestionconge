@@ -29,6 +29,6 @@ class AdminDashController extends Controller
         $jours_feries = JourFerie::all(); // Include holidays data
 
 
-        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles,'soldes' => $soldes ]);
+        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles,'soldes' => $soldes,'jours_feries'=>$jours_feries ]);
     }
 }
