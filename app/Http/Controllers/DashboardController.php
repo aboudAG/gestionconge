@@ -35,6 +35,12 @@ class DashboardController extends Controller
         }
 
         $employe = Employe::find($user->MATRICULE);
+
+        if($employe->role->NOM == 'Admin'){
+            return redirect()->route('admindash')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
+
         $holidays = JourFerie::all();
 
         //SOLDE RESTANT ANNEE COURANTE:

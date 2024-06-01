@@ -120,9 +120,60 @@
             display: flex;
             justify-content: space-around;
         }
+
+        .alert {
+        border-radius: 0.4rem;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border: none;
+        margin-left: 250px;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    /* Animation pour attirer l'attention sur les messages */
+    .alert {
+        animation: fadeIn 0.5s;
+    }
+
+    /* Keyframes pour l'animation fadeIn */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
     </style>
 </head>
 <body>
+
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
 
 <div class="sidebar">
     <a href="#dashboard">Tableau de Bord</a>
@@ -130,6 +181,8 @@
     <a href="#addEmployee" data-toggle="modal" data-target="#addEmployeeModal">Ajouter Employé</a>
     <a href="#structures">Consulter Structures</a>
     <a href="#addStructure" data-toggle="modal" data-target="#addStructureModal">Ajouter Structure</a>
+    <a href="#soldestable">Consulter Soldes</a>
+    <a href="#addSolde" data-toggle="modal" data-target="#addSoldeModal">Ajouter Solde</a>
     <a href="#holidays">Gérer les jours fériés</a>
     <a href="#addHolidayModal" data-toggle="modal" data-target="#addHolidayModal">Ajouter Jour ferié</a>
 
@@ -545,6 +598,141 @@
 @endforeach
 
 
+     <!-- Consulter Employés -->
+     <div id="soldes">
+        <h3>Liste des soldes Employés</h3>
+        <table id="soldestable" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Matricule</th>
+                    <th>Année</th>
+                    <th>Jours pris</th>
+                    <th>Jours restant</th>
+                    <th>Actions</th>
+                </tr>
+                <tr>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Matricule"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Année"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Jours pris"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Jours restant"></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($soldes as $solde)
+                <tr>
+                    <td>{{ $solde->EMPLOYE_ID }}</td>
+                    <td>{{ $solde->ANNEE }}</td>
+                    <td>{{ $solde->JOURS_PRIS }}</td>
+                    <td>{{ $solde->JOURS_RESTANT }}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editsoldeModal{{ $solde->ID }}">Modifier</button>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" id="addSoldeModal" tabindex="-1" aria-labelledby="addSoldeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSoldeModalLabel">Ajouter un Solde</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('soldes.store') }}" method="POST" class="row">
+                    @csrf
+                    <div class="col-md-6">
+                        <label for="EMPLOYE" class="form-label">Employé</label>
+                        <select class="form-select" id="EMPLOYE" name="EMPLOYE_ID">
+                            @foreach($employes as $employe)
+                                <option value="{{ $employe->MATRICULE }}">{{ $employe->MATRICULE }}: {{ $employe->NOM }}</option>
+                            @endforeach
+                        </select>
+                        @if ($errors->has('EMPLOYE_ID'))
+                            <div class="text-danger">{{ $errors->first('EMPLOYE_ID') }}</div>
+                        @endif
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ANNEE" class="form-label">Année</label>
+                        <input type="number" class="form-control" id="ANNEE" name="ANNEE" required value="{{ old('ANNEE') }}">
+                        @if ($errors->has('ANNEE'))
+                            <div class="text-danger">{{ $errors->first('ANNEE') }}</div>
+                        @endif
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOURS_PRIS" class="form-label">Jours Pris</label>
+                        <input type="number" class="form-control" id="JOURS_PRIS" name="JOURS_PRIS" required value="{{ old('JOURS_PRIS') }}">
+                        @if ($errors->has('JOURS_PRIS'))
+                            <div class="text-danger">{{ $errors->first('JOURS_PRIS') }}</div>
+                        @endif
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOURS_RESTANT" class="form-label">Jours Restant</label>
+                        <input type="number" class="form-control" id="JOURS_RESTANT" name="JOURS_RESTANT" required value="{{ old('JOURS_RESTANT') }}">
+                        @if ($errors->has('JOURS_RESTANT'))
+                            <div class="text-danger">{{ $errors->first('JOURS_RESTANT') }}</div>
+                        @endif
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@foreach($soldes as $solde)
+<div class="modal fade" id="editsoldeModal{{ $solde->ID }}" tabindex="-1" aria-labelledby="editsoldeModalLabel{{ $solde->ID }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editsoldeModalLabel{{ $solde->ID }}">Modifier Solde Employé</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('soldes.update', $solde->ID) }}" method="POST" class="row">
+                    @csrf
+                    @method('PUT')
+                    <div class="col-md-6">
+                        <label for="EMPLOYE_ID{{ $solde->ID }}" class="form-label">Employé</label>
+                        <select class="form-select" id="EMPLOYE_ID{{ $solde->ID }}" name="EMPLOYE_ID">
+                            @foreach($employes as $employe)
+                            <option value="{{ $employe->MATRICULE }}" {{ $solde->EMPLOYE_ID == $employe->MATRICULE ? 'selected' : '' }}>
+                                {{ $employe->MATRICULE }}: {{ $employe->NOM }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ANNEE{{ $solde->ID }}" class="form-label">Année</label>
+                        <input type="text" class="form-control" id="ANNEE{{ $solde->ID }}" name="ANNEE" value="{{ $solde->ANNEE }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOURS_PRIS{{ $solde->ID }}" class="form-label">Jours pris</label>
+                        <input type="text" class="form-control" id="JOURS_PRIS{{ $solde->ID }}" name="JOURS_PRIS" value="{{ $solde->JOURS_PRIS }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="JOURS_RESTANT{{ $solde->ID }}" class="form-label">Jours restant</label>
+                        <input type="text" class="form-control" id="JOURS_RESTANT{{ $solde->ID }}" name="JOURS_RESTANT" value="{{ $solde->JOURS_RESTANT }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
@@ -582,7 +770,17 @@
             });
         });
 
+        var soldesTable = $('#soldestable').DataTable();
+        $('#soldestable thead tr:eq(1) th').each(function(i) {
+            $('input', this).on('keyup change', function() {
+                if (soldesTable.column(i).search() !== this.value) {
+                    soldesTable.column(i).search(this.value).draw();
+                }
+            });
+        });
+
         // Initialiser Choices.js pour les sélections de rôle et de structure
+        new Choices('#EMPLOYE');
         new Choices('#ROLE');
         new Choices('#STRUCTURE');
         @foreach($employes as $employee)

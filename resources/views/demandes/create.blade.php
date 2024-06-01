@@ -361,16 +361,29 @@
                 return;
             }
 
+
+
             if (!selectedStartDate || date < selectedStartDate || (selectedStartDate && selectedEndDate)) {
                 if (date < minDate) {
                     alert('La date de début doit être au moins 10 jours après aujourd\'hui.');
                     return;
                 }
+
+                // if (dayEl.classList.contains('weekend')) {
+                //  alert('Vous ne pouvez pas commencer par un weekend');
+                // }
+
                 clearSelection();
                 selectedStartDate = date;
                 selectedEndDate = null;
                 dayEl.classList.add('selected-range');
                 updateFormFields();
+                if (dayEl.classList.contains('weekend')) {
+                 alert('Vous ne pouvez pas commencer par un weekend');
+                 clearSelection();
+                 updateFormFields();
+                }
+
             } else if (selectedStartDate && !selectedEndDate && date >= selectedStartDate) {
                 selectedEndDate = date;
                 updateFormFields();
@@ -488,6 +501,8 @@
                 alert('La date de fin doit être postérieure à la date de début.');
                 return false;
             }
+
+
             return true;
         }
 

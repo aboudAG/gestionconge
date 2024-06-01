@@ -13,6 +13,7 @@ use App\Models\Employe;
 use App\Models\Etape;
 use App\Models\Exercice;
 use App\Models\DroitConge;
+use App\Models\Notification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 class DemandeCongeDecisionController extends Controller
@@ -20,6 +21,22 @@ class DemandeCongeDecisionController extends Controller
 
 public function show($id)
     {
+
+        $user = Auth::user();
+        if (!$user || !$user->MATRICULE) {
+            return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
+        }
+
+        $employe = Employe::find($user->MATRICULE);
+
+        if($employe->role->NOM == 'Admin'){
+            return redirect()->route('admindash')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
+        if($employe->role->NOM == 'Employe'){
+            return redirect()->route('dashboard')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
         $demande = Demande::with(['employe.structure', 'statuts'])
                         ->findOrFail($id);
 
@@ -83,13 +100,19 @@ public function show($id)
         if (!$user || !$user->MATRICULE) {
             return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
         }
-    
+
+        $employe = Employe::find($user->MATRICULE);
+
+        if($employe->role->NOM == 'Admin'){
+            return redirect()->route('admindash')->withErrors('Vous ne pouvez pas acceder a cette page.');
+        }
+
         $demande = Demande::findOrFail($id);
         $currentStatut = $demande->statuts()->where('STATUT', 'En Attente')->firstOrFail();
         $decision = $request->input('decision');
         $commentaire = $request->input('comment');
         $approvuerId = $user->MATRICULE;
-    
+
         DB::transaction(function () use ($demande, $currentStatut, $decision, $commentaire, $approvuerId, $user) {
             // Update the current statut using Query Builder
             DB::table('statut_conge')
@@ -100,8 +123,13 @@ public function show($id)
                     'APPROUVEUR_ID' => $approvuerId,
                     'DATE_DECISION' => now(),
                 ]);
-    
+
             if ($decision === 'Accepter') {
+                $notif = Notification::create([
+                    'MESSAGE' => 'Votre demande N° '. $demande->ID .' a été acceptée au niveau de l\'étape ' . $currentStatut->etape->NOM,
+                    'EMPLOYE_ID' => $demande->EMPLOYE_ID,
+                    'DATE_ENVOIE' => now(),
+                ]);
                 $nextEtapeNom = $demande->getNextEtape($currentStatut->etape->NOM);
                 if ($nextEtapeNom) {
                     $nextEtape = Etape::where('NOM', $nextEtapeNom)->first();
@@ -134,7 +162,7 @@ public function show($id)
                     } else {
                         $premierExercice = $exercices[0];
                         $secondExercice = $exercices[1];
-    
+
                         // Récupérer les DroitConge associés
                         $premierDroit = $premierExercice->droitConge;
                         $secondDroit = $secondExercice->droitConge;
@@ -152,7 +180,7 @@ public function show($id)
                             'JOURS_PRIS' => $nombreDeJours,
                         ]);
                     }
-    
+
                     // Check if the employee going on leave has a role that needs delegation
                     $employe = $demande->employe;
                     if (in_array($employe->role->NOM, ['Chef de service', 'Chef de departement', 'Directeur'])) {
@@ -166,8 +194,16 @@ public function show($id)
                     }
                 }
             }
+
+            if($decision === 'Refuser'){
+                $notif = Notification::create([
+                    'MESSAGE' => 'Votre demande N° ' . $demande->ID . ' a été refusée au niveau de l\'étape ' . $currentStatut->etape->NOM,
+                    'EMPLOYE_ID' => $demande->EMPLOYE_ID,
+                    'DATE_ENVOIE' => now(),
+                ]);
+            }
         });
-    
+
         return redirect()->route('listedemandes.index')->with('success', 'Décision enregistrée avec succès.');
     }
 }

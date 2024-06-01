@@ -39,9 +39,9 @@ class Demande extends Model
 }
 
     public function statuts()
-    {
-        return $this->hasMany(StatutConge::class, 'DEMANDE_CONGE_ID', 'ID');
-    }
+{
+    return $this->hasMany(StatutConge::class, 'DEMANDE_CONGE_ID', 'ID')->orderBy('created_at', 'desc');
+}
 
     public function etapes()
     {

@@ -32,6 +32,11 @@ class DemandeController extends Controller
         return redirect()->route('login')->withErrors('Vous devez être connecté pour accéder à cette page.');
     }
 
+    $employe = Employe::find($user->MATRICULE);
+
+    if($employe->role->NOM == 'Admin'){
+        return redirect()->route('admindash')->withErrors('Vous ne pouvez pas acceder a cette page.');
+    }
     // Récupérer l'employé à partir de son matricule
     $employe = Employe::with('droitConges')->find($user->MATRICULE);
 
@@ -134,7 +139,7 @@ class DemandeController extends Controller
             // Commencer une transaction de base de données
             DB::beginTransaction();
 
-            //  try {
+             try {
 
                 if ($request->hasFile('justificatif')) {
                     $file = $request->file('justificatif');
@@ -165,6 +170,17 @@ class DemandeController extends Controller
                         'DATE_CREATION' => now(),
 
                     ]);
+                }
+
+                $demandes = Demande::where('EMPLOYE_ID', $employe->MATRICULE)->get();
+
+                foreach ($demandes as $demand) {
+                    // Récupérer le dernier statut en utilisant la relation triée
+                    $dernierStatut = $demand->statuts->first();
+
+                    if ($dernierStatut && $dernierStatut->STATUT == 'En Attente') {
+                        throw new Exception('Vous avez déjà une demande en attente.');
+                    }
                 }
 
                 $notif = Notification::create([
@@ -231,12 +247,12 @@ class DemandeController extends Controller
 
                 return redirect()->route('statutsconges.index')->with('success', 'La demande de congé a été enregistrée avec succès.');
 
-            // } catch (Exception $e) {
+            } catch (Exception $e) {
 
-            //      // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
-            //      DB::rollBack();
-            //      return redirect()->back()->withInput()->withErrors(['error' => 'Une erreur est survenue lors de la création de la demande de congé. Veuillez réessayer.']);
-            //  }
+                 // En cas d'erreur, annuler la transaction et rediriger avec un message d'erreur
+                 DB::rollBack();
+                 return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
+             }
         } else {
             // Gérer le cas où l'employé n'est pas trouvé
             return redirect()->intended('login');

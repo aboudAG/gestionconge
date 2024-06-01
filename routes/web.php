@@ -13,6 +13,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\SuivreDemandeController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SoldeController;
 use App\Http\Controllers\TelechargerDemandeController;
 use App\Http\Controllers\AdminDashController;
 use Illuminate\Support\Facades\Route;
@@ -29,11 +30,14 @@ use App\Http\Controllers\JourFerieController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
@@ -118,3 +122,7 @@ Route::delete('/jours_feries/{id}', [JourFerieController::class, 'destroy'])->na
 
 
 Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;
+
+Route::post('/soldes', [SoldeController::class, 'store'])->name('soldes.store');
+Route::put('/soldes/{id}', [SoldeController::class, 'update'])->name('soldes.update');
+
