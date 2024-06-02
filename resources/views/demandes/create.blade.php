@@ -254,21 +254,26 @@
             var year1 = document.getElementById('yearSelection');
             var year2 = document.getElementById('yearSelection2');
             var justificatifContainer = document.getElementById('justificatifContainer');
+            var droit = document.getElementById('yearSelection');
             var selectedType = typeSelect.options[typeSelect.selectedIndex].text;
 
-            if (selectedType === 'Maladie' || selectedType === 'Maternelle' || selectedType === 'Sans Solde') {
+            if (selectedType === 'Maladie' || selectedType === 'Maternite' || selectedType === 'Sans Solde') {
                 justificatifContainer.style.display = 'block';
-            } else {
-                justificatifContainer.style.display = 'none';
-            }
-
-            if (selectedType === 'Sans Solde') {
                 year1.style.display = 'none';
                 year2.style.display = 'none';
             } else {
+                justificatifContainer.style.display = 'none';
                 year1.style.display = 'block';
                 year2.style.display = 'block';
             }
+
+            // if (selectedType === 'Sans Solde') {
+            //     year1.style.display = 'none';
+            //     year2.style.display = 'none';
+            // } else {
+            //     year1.style.display = 'block';
+            //     year2.style.display = 'block';
+            // }
         }
 
         function createCalendar() {
@@ -389,6 +394,7 @@
                 updateFormFields();
                 highlightRange();
                 showYearSelection();
+                handleTypeChange();
             }
         }
 

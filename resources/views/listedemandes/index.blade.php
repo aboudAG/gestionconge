@@ -1,3 +1,4 @@
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -30,13 +31,13 @@
                                     <th>Poste</th>
                                     <th>Code Structure</th>
                                     <th>Nom Structure</th>
-                                   
+
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($demandes as $demande)
-                                    <tr> 
+                                    <tr>
 
                                         <td>{{ $demande->ID }}</td>
                                         <td>{{ $demande->TITRE }}</td>
@@ -46,13 +47,13 @@
                                         <td>{{ $demande->employe->POSTE ?? 'Non disponible' }}</td>
                                         <td>{{ optional($demande->employe->structure)->CODE ?? 'Non spécifié' }}</td>
                                         <td>{{ optional($demande->employe->structure)->NOM ?? 'Non spécifié' }}</td>
-                                       
+
                                         <td>
                                             <a href="{{ route('decisiondemande.show', $demande->ID) }}" class="btn btn-primary btn-sm">Consulter</a>
                                         </td>
                                     </tr>
 
-        
+
                                 @endforeach
                             </tbody>
                         </table>

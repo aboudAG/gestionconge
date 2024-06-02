@@ -85,6 +85,7 @@ Route::delete('/types/{id}', [TypeController::class, 'destroy'])->name('types.de
 
 Route::get('/demandes/create', [DemandeController::class, 'create'])->name('demandes.create');
 Route::post('/demandes', [DemandeController::class, 'store'])->name('demandes.store');
+Route::delete('demandes/{id}/delete', [DemandeController::class, 'destroy'])->name('demandes.destroy');
 
 Route::get('/statutsconges', [StatutCongeController::class, 'index'])->name('statutsconges.index');
 
@@ -97,7 +98,7 @@ Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'de
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
 Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');
 
-Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;
+Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
 Route::post('/soldes', [SoldeController::class, 'store'])->name('soldes.store');
 Route::put('/soldes/{id}', [SoldeController::class, 'update'])->name('soldes.update');

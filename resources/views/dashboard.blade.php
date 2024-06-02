@@ -6,6 +6,23 @@
         </h2>
     </x-slot>
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
+
     <div class="container mt-4">
         <div class="row">
             <!-- First Column: Information and History -->
@@ -220,7 +237,7 @@
                     <div class="card-body">
                         @if ($employe->notifications)
                             @foreach ($employe->notifications as $notif )
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 10px;">
                                 <div>
                                     <p class="mb-0">{{$notif->MESSAGE}} le {{$notif->DATE_ENVOIE}}</p>
                                 </div>
@@ -298,6 +315,40 @@
     .chart-container{
         width: 200px; /* Adjust as necessary */
     height: 200px; /
+    }
+    .alert {
+        border-radius: 0.4rem;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border: none;
+
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    /* Animation pour attirer l'attention sur les messages */
+    .alert {
+        animation: fadeIn 0.5s;
+    }
+
+    /* Keyframes pour l'animation fadeIn */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
 </style>
 

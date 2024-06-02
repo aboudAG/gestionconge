@@ -73,7 +73,7 @@ class DemandeController extends Controller
             'DATE_DEBUT' => 'required|date|before:DATE_FIN', // Date de début doit être avant ou égale à la date de fin
             'DATE_FIN' => 'required|date|after:DATE_DEBUT', // Date de fin doit être après ou égale à la date de début
             'EMPLOYE_REMPLACEMENT_ID' => 'nullable',
-            'year1' => 'required|exists:droit_au_conges,ANNEE', // ID de l'employé de remplacement, nullable si aucun remplacement n'est prévu
+             // ID de l'employé de remplacement, nullable si aucun remplacement n'est prévu
         ]);
 
         // Récupérer l'employé connecté
@@ -147,6 +147,7 @@ class DemandeController extends Controller
                     $file->move('public\justificatifs', $fileName);
 
 
+
                 $demande = Demande::create([
                     'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
                     'TYPE_DEMANDE' => $request->input('TYPE_ID'),
@@ -157,7 +158,9 @@ class DemandeController extends Controller
                     'EMPLOYE_REMPLACEMENT_ID' => $request->input('EMPLOYE_REMPLACEMENT_ID'),
                     'DATE_CREATION' => now(),
 
-                ]);}
+                ]);
+
+            }
                 else{
                     $demande = Demande::create([
                         'EMPLOYE_ID' => $user->MATRICULE, // Utiliser l'ID de l'utilisateur connecté
@@ -189,6 +192,8 @@ class DemandeController extends Controller
                     'DATE_ENVOIE' => now(),
                 ]);
 
+                if($request->input('TYPE_ID') == 1){
+
                 $droit1 = DroitConge::where('ANNEE', $request->year1)->first();
                 $droit2 = DroitConge::where('ANNEE', $request->year2)->first();
 
@@ -206,7 +211,7 @@ class DemandeController extends Controller
                     if($nombreDeJours > $droit2->JOURS_RESTANT){
                         throw new Exception("Vous n\'avez pas assez de solde");
                     }
-                }
+                }}
 
                 // Créer une nouvelle entrée dans la table statut_conges
                 $statutConge = StatutConge::create([
@@ -223,6 +228,9 @@ class DemandeController extends Controller
                 // $dateFin = Carbon::parse($demande->DATE_FIN);
                 // $nombreDeJours = $dateDebut->diffInDays($dateFin) + 1;
                 // $nombreDeJours -= $droit->JOURS_RESTANT;
+                if($request->input('TYPE_ID') == 1){
+
+
                 $exercice = Exercice::create([
                     'DEMANDE_CONGE_ID' => $demande->ID,
                     'DROIT_AU_CONGE_ID' => $droit1->ID,
@@ -237,7 +245,7 @@ class DemandeController extends Controller
                         'DEMANDE_CONGE_ID' => $demande->ID,
                         'DROIT_AU_CONGE_ID' => $droit2->ID,
                     ]);
-                }
+                }}
 
                 // Valider la transaction de base de données
 
@@ -258,5 +266,38 @@ class DemandeController extends Controller
             return redirect()->intended('login');
         }
     }
+
+    public function destroy($ID)
+{
+    try {
+        DB::transaction(function () use ($ID) {
+            // Trouve la demande dans la base de données
+            $demande = Demande::findOrFail($ID);
+
+            // Compte le nombre de statuts associés à la demande
+            $statutCount = StatutConge::where('DEMANDE_CONGE_ID', $demande->ID)->count();
+
+            // Si le nombre de statuts est supérieur à 1, l'annulation est impossible
+            if ($statutCount > 1) {
+                throw new \Exception('L\'annulation est impossible.');
+            }
+
+            // Supprime le statut associé
+            StatutConge::where('DEMANDE_CONGE_ID', $demande->ID)->delete();
+
+            // Supprime les exercices associés à la demande
+            Exercice::where('DEMANDE_CONGE_ID', $demande->ID)->delete();
+
+            // Supprime ensuite la demande
+            Demande::where('ID', $demande->ID)->delete();
+        });
+
+        // Redirige l'utilisateur vers une page appropriée après la suppression
+        return redirect()->route('dashboard')->with('success', 'Demande annulée avec succès.');
+    } catch (\Exception $e) {
+        return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
+    }
+}
+
 
 }

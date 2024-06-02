@@ -5,6 +5,22 @@
         </h2>
     </x-slot>
 
+    @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+
     <div class="container mt-4">
         <div class="card border">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -38,16 +54,21 @@
                                         <td>{{ $demande->DATE_DEBUT->format('Y-m-d') }}</td>
                                         <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
                                         <td>
-                                            <span class="badge 
-                                                @if($demande->statuts->last()->STATUT == 'Accepter') bg-success 
-                                                @elseif($demande->statuts->last()->STATUT == 'En Attente') bg-warning 
-                                                @elseif($demande->statuts->last()->STATUT == 'Refuser') bg-danger 
+                                            <span class="badge
+                                                @if($demande->statuts->last()->STATUT == 'Accepter') bg-success
+                                                @elseif($demande->statuts->last()->STATUT == 'En Attente') bg-warning
+                                                @elseif($demande->statuts->last()->STATUT == 'Refuser') bg-danger
                                                 @endif">
                                                 {{ $demande->statuts->last()->STATUT ?? 'N/A' }}
                                             </span>
                                         </td>
                                         <td>
                                             <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#statusModal{{ $demande->ID }}">Details</button>
+                                            <form action="{{ route('demandes.destroy', $demande->ID) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Annuler</button>
+                                            </form>
                                         </td>
                                     </tr>
 
@@ -107,4 +128,39 @@
         background-color: #dc3545 !important;
         color: white;
     }
+    .alert {
+        border-radius: 0.4rem;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border: none;
+
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    /* Animation pour attirer l'attention sur les messages */
+    .alert {
+        animation: fadeIn 0.5s;
+    }
+
+    /* Keyframes pour l'animation fadeIn */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
 </style>

@@ -32,12 +32,13 @@
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exerciceModal">
                             Voir Exercice Choisi
                         </button>
-                        @if ($demande->JUSTIFICATIF)
+
+
+                    @endif
+                    @if ($demande->JUSTIFICATIF)
                         <button type="button" class="btn btn-primary btn-sm" data-justificatif="{{ asset('public\justificatifs/' . $demande->JUSTIFICATIF) }}" onclick="openJustificatif(this)">Justificatif</button>
 
                         @endif
-
-                    @endif
                 </div>
                 <div class="card-body">
                     <p><strong>Numero de la demande:</strong> {{ $demande->ID }}</p>
@@ -227,9 +228,15 @@
                     </div>
                     <div class="modal-body">
                         <ul>
+
+
+
                             @foreach($exerciceData as $data)
+                            @if (isset($data->droitConge->ANNEE) )
                                 <li><strong>Année:</strong> {{ $data->droitConge->ANNEE }}, <strong>Jours pris:</strong> {{ $data->JOURS_PRIS }}</li>
+                            @endif
                             @endforeach
+
                         </ul>
                     </div>
                 </div>
