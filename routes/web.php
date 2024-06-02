@@ -18,6 +18,7 @@ use App\Http\Controllers\TelechargerDemandeController;
 use App\Http\Controllers\AdminDashController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JourFerieController;
+use App\Http\Controllers\Exercice;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar');
-
 
 require __DIR__.'/auth.php';
 

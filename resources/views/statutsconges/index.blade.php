@@ -55,11 +55,11 @@
                                         <td>{{ $demande->DATE_FIN->format('Y-m-d') }}</td>
                                         <td>
                                             <span class="badge
-                                                @if($demande->statuts->last()->STATUT == 'Accepter') bg-success
-                                                @elseif($demande->statuts->last()->STATUT == 'En Attente') bg-warning
-                                                @elseif($demande->statuts->last()->STATUT == 'Refuser') bg-danger
+                                                @if($demande->statuts->first()->STATUT == 'Accepter') bg-success
+                                                @elseif($demande->statuts->first()->STATUT == 'En Attente') bg-warning
+                                                @elseif($demande->statuts->first()->STATUT == 'Refuser') bg-danger
                                                 @endif">
-                                                {{ $demande->statuts->last()->STATUT ?? 'N/A' }}
+                                                {{ $demande->statuts->first()->STATUT ?? 'N/A' }}
                                             </span>
                                         </td>
                                         <td>
@@ -97,7 +97,7 @@
                                                     </ul>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    @if($demande->statuts->last()->STATUT == 'Accepter')
+                                                    @if($demande->statuts->first()->STATUT == 'Accepter')
                                                         <a href="{{ route('leave-request.download', ['id' => $demande->ID]) }}" class="btn btn-primary">Télécharger la demande</a>
                                                     @endif
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

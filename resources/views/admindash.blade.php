@@ -204,6 +204,7 @@
                     <th>Email</th>
                     <th>Poste</th>
                     <th>Date d'Embauche</th>
+                    <th>Role</th>
                     <th>Actions</th>
                 </tr>
                 <tr>
@@ -213,6 +214,7 @@
                     <th class="search-column"><input type="text" placeholder="Rechercher Email"></th>
                     <th class="search-column"><input type="text" placeholder="Rechercher Poste"></th>
                     <th class="search-column"><input type="text" placeholder="Rechercher Date d'Embauche"></th>
+                    <th class="search-column"><input type="text" placeholder="Rechercher Role"></th>
                     <th></th>
                 </tr>
             </thead>
@@ -229,6 +231,7 @@
                     @endisset</td>
                     <td>{{ $employee->POSTE }}</td>
                     <td>{{ $employee->DATE_EMBAUCHE }}</td>
+                    <td>{{ $employee->role->NOM }}</td>
                     <td class="action-buttons">
                         <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editEmployeeModal{{ $employee->MATRICULE }}">Modifier</button>
                         <form action="{{ route('employes.destroy', $employee->MATRICULE) }}" method="POST" style="display:inline;">

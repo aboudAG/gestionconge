@@ -82,7 +82,7 @@
         <p><strong>Remplacant:</strong> {{ $demande->remplacant->NOM }} {{ $demande->remplacant->PRENOM }} ( {{ $demande->remplacant->POSTE }} )</p>
 
 
-        <h3>Historique des Statuts</h3>
+        <h3>Historique d'approbation</h3>
         @foreach($demande->statuts as $statut)
             <p>{{ $statut->STATUT }} au niveau du <strong>{{ $statut->etape->NOM ?? 'N/A' }}</strong> Par <strong>{{ $statut->approbateur->NOM }} {{ $statut->approbateur->PRENOM }}</strong> Le <strong>{{ $statut->DATE_DECISION }}</strong></p>
             <hr>

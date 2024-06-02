@@ -1,4 +1,5 @@
 <x-app-layout>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMcO5cG2z6pJ4VTxnp9jZm+lz1prnp4fKn4aFjc" crossorigin="anonymous">
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -113,13 +114,13 @@
                 <div class="card border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Historique des mes demandes:</span>
-                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
+                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Détails</a>
                     </div>
                     <div class="card-body">
                         @if($userDemandesConges->isEmpty())
                             <p class="text-muted">No history available.</p>
                         @else
-                            <div class="table-responsive">
+                            <div class="table-responsive scrollable-table">
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
@@ -165,7 +166,7 @@
                 <div class="card mb-4 border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <span>Plan de congé de l'équipe:</span>
-                        <a href="{{ route('statutsconges.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
+                       
                     </div>
                     <div class="card-body">
                         @php
@@ -183,7 +184,7 @@
                         @endforeach
 
                         @if(!$hasFutureLeaves)
-                            <p class="text-muted">No team members are currently on leave or have upcoming leave planned.</p>
+                            <p class="text-muted">Aucun membre de l'équipe n'est actuellement en congé ou n'a prévu de congé prochainement.</p>
                         @else
                             @foreach($teamMembersOnLeave as $member)
                                 @foreach($member->demandes as $demande)
@@ -220,8 +221,8 @@
 
                         <div class="card mb-4 border">
                             <div class="card-header d-flex justify-content-between align-items-center">
-                                <span>demandes en attente:</span>
-                                <a href="{{ route('listedemandes.index') }}" class="btn btn-primary btn-sm">Afficher tout</a>
+                                <span>Demandes en attente de decision:</span>
+                                <a href="{{ route('listedemandes.index') }}" class="btn btn-primary btn-sm">Détails</a>
                             </div>
                             <div class="card-body">
                                 <p>Nombre de demandes en attente : {{ $count}} </p>
@@ -442,3 +443,14 @@
 });
 </script>
 
+
+<style>
+    
+    .scrollable-table {
+    max-height: 21rem; /* Adjust the height as needed */
+    overflow-y: auto;
+    overflow-x: hidden;
+   
+    white-space: nowrap; 
+}
+    </style>

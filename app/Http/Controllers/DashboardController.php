@@ -112,7 +112,6 @@ class DashboardController extends Controller
 //  GET HISTROY WITH STATUT AND ETAPE
 $userDemandesConges = Demande::with(['type'])
     ->where('EMPLOYE_ID', $userMatricule)
-    ->limit(3)
     ->get();
 
 $userDemandesConges->each(function ($demande) {
