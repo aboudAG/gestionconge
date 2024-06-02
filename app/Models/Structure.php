@@ -42,6 +42,19 @@ class Structure extends Model
     {
         return $this->hasMany(Structure::class, 'PARENT_ID', 'ID');
     }
+
+    public function getPathAttribute()
+    {
+        $path = $this->NOM;
+        $parent = $this->parent;
+
+        while ($parent) {
+            $path = $parent->NOM . ' > ' . $path;
+            $parent = $parent->parent;
+        }
+
+        return $path;
+    }
    
 }
 

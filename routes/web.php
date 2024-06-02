@@ -17,6 +17,7 @@ use App\Http\Controllers\SoldeController;
 use App\Http\Controllers\TelechargerDemandeController;
 use App\Http\Controllers\AdminDashController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JourFerieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,7 +99,7 @@ Route::post('/demandes/decide/{id}', [DemandeCongeDecisionController::class, 'de
 Route::get('/leave-track', [SuivreDemandeController::class, 'track'])->name('leave.track');
 Route::get('/leave-request/download/{id}', [TelechargerDemandeController::class, 'download'])->name('leave-request.download');
 
-Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+Route::delete('notifs/{id}/delete', [NotificationController::class, 'destroy'])->name('notifications.destroy');;
 
 Route::post('/soldes', [SoldeController::class, 'store'])->name('soldes.store');
 Route::put('/soldes/{id}', [SoldeController::class, 'update'])->name('soldes.update');

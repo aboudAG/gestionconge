@@ -45,17 +45,6 @@ class StructureController extends Controller
         // Create the structure without chemin first
         $structure = Structure::create($validatedData);
 
-        // Determine the chemin based on the parent (if there's a parent)
-        $parentChemin = '';
-        if (isset($validatedData['PARENT_ID'])) {
-            $parentStructure = Structure::find($validatedData['PARENT_ID']);
-            $parentChemin = $parentStructure->CHEMIN ?? '';
-        }
-
-        // Update chemin with its own ID appended to parent's chemin
-        $structure->CHEMIN = trim($parentChemin . $structure->id, '/');
-        $structure->save();
-
         return redirect()->route('admindash')->with('success', 'Structure ajoutée avec succès.');
     }
     /**

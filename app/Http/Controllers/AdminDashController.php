@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Structure;
 use App\Models\Employe;
 use App\Models\Solde;
+use App\Models\JourFerie;
 use Illuminate\Support\Facades\Auth;
 
 class AdminDashController extends Controller
@@ -25,8 +26,9 @@ class AdminDashController extends Controller
         $structures = Structure::all();
         $roles = Role::all();
         $soldes = Solde::all();
+        $jours_feries = JourFerie::all(); // Include holidays data
 
 
-        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles, 'soldes' => $soldes ]);
+        return view('admindash', ['employes' => $employes,'structures' => $structures , 'roles' => $roles,'soldes' => $soldes,'jours_feries'=>$jours_feries ]);
     }
 }
