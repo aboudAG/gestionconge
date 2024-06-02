@@ -57,16 +57,16 @@ class EmployeController extends Controller
         $structure = Structure::findOrFail($validatedData['STRUCTURE_ID']);
         $year = date('Y', strtotime($validatedData['DATE_EMBAUCHE']));
         $lastEmploye = Employe::where('MATRICULE', 'like', "{$year}-%")->orderBy('MATRICULE', 'desc')->first();
-        
+
     // Extract the sequence number, ensure to handle the case correctly
     $sequence = 1; // Default sequence number
     if ($lastEmploye) {
         // Get the part after the dash
         $lastSequence = substr($lastEmploye->MATRICULE, strlen($year) + 1 );
-        
+
         // Increment the sequence number
         $sequence = (int)$lastSequence + 1;
-        
+
     }
     $sequence = str_pad($sequence, 5, '0', STR_PAD_LEFT);
 
@@ -157,6 +157,6 @@ class EmployeController extends Controller
             $employe->delete();
         });
 
-        return redirect()->route('employes.index')->with('success', 'Employé et utilisateur associé supprimés avec succès.');
+        return redirect()->route('admindash')->with('success', 'Employé et utilisateur associé supprimés avec succès.');
     }
 }
